@@ -1,0 +1,3 @@
+= MArc - Multi-Agent-System for Software-Architecture
+ 
+MArc is a multi-agent system for software architecture, designed to facilitate the development and management of complex software systems through the use of agents.
