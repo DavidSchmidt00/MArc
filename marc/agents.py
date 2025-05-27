@@ -21,6 +21,7 @@ critic_agent = AssistantAgent(
     description="Assistant that is good at giving constructive feedback",
     model_client=model_client,
     tools=[read_file],
+    reflect_on_tool_use=True,
     system_message="""
         You are a helpful AI assistant.
         Provide constructive feedback.

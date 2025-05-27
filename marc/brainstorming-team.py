@@ -34,11 +34,10 @@ documentation_agent = AssistantAgent(
     model_client=model_client,
     reflect_on_tool_use=True,
     system_message="""
-        You are a documentation agent that can write documentation into files and read files.
-        Use write_file to write files and read_file to read files, use discover_filesystem to discover the filesystem and find files.
-        If the reading or writing returns an error, use discover_filesystem to find an appropriate place.
-        If you cant find a file, just return an error message, dont return python code as you cannot execute code!
-        Please use easy to read formats like markdown or asciidoc.
+        You are a documentation agent that.
+        Before writing a file, use discover_filesystem to find an appropriate place, dont just write it into the root directory.
+        Use write_file to write files and read_file to read files, use discover_filesystem to discover the filesystem.
+        If you cant find a file, only return an error message, dont return python code as you cannot execute code!
         """,
 )
 
@@ -70,5 +69,6 @@ async def main():
             """),
             output_stats=True,
     )
+    # print(discover_filesystem())
 
 asyncio.run(main())

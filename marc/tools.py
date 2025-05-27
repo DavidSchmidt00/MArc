@@ -1,4 +1,4 @@
-MARC_WORKSPACE_PATH = "../marc_workspace"
+MARC_WORKSPACE_PATH = "marc_workspace"
 
 # Tools
 def generate_puml_diagram(puml: str):
@@ -25,20 +25,18 @@ def read_file(filepath: str):
         return f"Error reading file {filepath}: {e}"
 
 def discover_filesystem():
-    """Return a complete representation of the filesystem with all files, directories and all recursive subdirectories, execpt directories and file that start with '.'."""
+    """Return a complete textual representation of the filesystem with all files, directories and all recursive subdirectories, even if they are empty."""
     import os
 
-    def get_filesystem_structure(path):
-        structure = {}
-        for item in os.listdir(path):
-            if item.startswith('.'):
-                continue
-            item_path = os.path.join(path, item)
-            if os.path.isdir(item_path):
-                structure[item] = get_filesystem_structure(item_path)
-            else:
-                structure[item] = None
-        return structure
+    def list_files(startpath):
+        result = []
+        for root, dirs, files in os.walk(startpath):
+            level = root.replace(startpath, '').count(os.sep)
+            indent = ' ' * 4 * (level)
+            result.append(f"{indent}{os.path.basename(root)}/")
+            subindent = ' ' * 4 * (level + 1)
+            for f in files:
+                result.append(f"{subindent}{f}")
+        return "\n".join(result)
 
-    filesystem_structure = get_filesystem_structure(MARC_WORKSPACE_PATH)
-    return filesystem_structure
+    return list_files(MARC_WORKSPACE_PATH)
