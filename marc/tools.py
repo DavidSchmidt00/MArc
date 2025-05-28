@@ -7,7 +7,12 @@ def generate_puml_diagram(puml: str):
 
 
 def write_file(text: str, filepath: str):
-    """Write a text to a file with a specific format"""
+    f"""Write a text to a file with a specific format
+    
+    Args:
+        text (str): The text to write to the file.
+        filepath (str): The path where the file should be written.`.
+    """
     try:
         with open(f"{MARC_WORKSPACE_PATH}/{filepath}", "w") as file:
             file.write(text)
@@ -16,13 +21,17 @@ def write_file(text: str, filepath: str):
         return f"Error writing file {filepath}: {e}"
 
 def read_file(filepath: str):
-    """Read a text from a file with a specific format"""
+    f"""Read a text from a file with a specific format
+    
+    Args:
+        filepath (str): The path to the file to read.`.
+    """
     try:
         with open(f"{MARC_WORKSPACE_PATH}/{filepath}", "r") as file:
             text = file.read()
             return text
     except Exception as e:
-        return f"Error reading file {filepath}: {e}"
+        return f"Error reading file {filepath}: {e}" 
 
 def discover_filesystem():
     """Return a complete textual representation of the filesystem with all files, directories and all recursive subdirectories, even if they are empty."""

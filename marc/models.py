@@ -17,32 +17,30 @@ import os
 #         )
 #     )
 
-gemini_model = OpenAI(
-  base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-  api_key=os.getenv("GEMINI_API_KEY"),
-)
-
 if __name__ == "__main__":
+    
+    gemini_model = OpenAI(
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    api_key=os.getenv("GEMINI_API_KEY"),
+    )
     for model in gemini_model.models.list():
         print(model)
-    model = gemini_model.models.retrieve("gemini-2.0-flash-lite")
-    print(model.id)
-    print(model)
-
+    
 gemini_model_client = OpenAIChatCompletionClient(
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-        #model="gemini-2.0-flash",
-        model="gemini-2.5-flash-preview-05-20",
+        model="gemini-2.0-flash",
+        # model="gemini-2.5-flash-preview-05-20",
         api_key=os.getenv("GEMINI_API_KEY"),
         parallel_tool_calls=False,
-        # max_tokens = 3500
-        model_info=ModelInfo(
-            family="unkown",
-            function_calling=True,
-            json_output=True,
-            structured_output=True,
-            vision=False
-        )
+        
+        # max_tokens = 3500,
+        # model_info=ModelInfo(
+        #     family="unkown",
+        #     function_calling=True,
+        #     json_output=True,
+        #     structured_output=True,
+        #     vision=False
+        # )
     )
 
 # openai_client = OpenAIChatCompletionClient(

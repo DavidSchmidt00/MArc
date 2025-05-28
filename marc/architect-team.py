@@ -1,31 +1,13 @@
 import asyncio
 
 from autogen_agentchat.agents import AssistantAgent
-from autogen_agentchat.base import TaskResult
-from autogen_agentchat.conditions import ExternalTermination, TextMentionTermination
 from autogen_agentchat.teams import MagenticOneGroupChat
 from autogen_agentchat.ui import Console
-from autogen_core import CancellationToken
-from autogen_core.models import ModelInfo
 from models import model_client
 from tools import generate_puml_diagram, write_file, read_file, discover_filesystem
 import agents
 
 # Agents
-
-senior_architect_agent = AssistantAgent(
-    name="senior_architect",
-    description="Senior architect agent that can design software architectures and has a lot of experience.",
-    model_client=model_client,
-    tools=[read_file],
-    reflect_on_tool_use=True,
-    system_message="""
-        You are a helpful AI assistant.
-        You are a senior architect agent that can design software architectures and has a lot of experience.
-        Give constructive feedback to the other agents.
-        You can also ask them questions to clarify their ideas.
-    """,
-)
 
 documentation_agent = AssistantAgent(
     name="documentation",
@@ -48,7 +30,7 @@ documentation_agent = AssistantAgent(
 # Team
 team = MagenticOneGroupChat(
             model_client=model_client,
-            participants=[agents.brainstrom_agent, senior_architect_agent, documentation_agent],
+            participants=[agents.brainstrom_agent, agents.senior_architect_agent, documentation_agent],
         )
 
 # Run
@@ -69,8 +51,7 @@ async def main():
 
                 Only stop if every agent is satisfied with the documentation and the architecture design.
                 Let the agent double-check if the result corresponds to the arc42 template.
-            """),
-            output_stats=True,
+            """)
     )
 
 asyncio.run(main())
