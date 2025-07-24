@@ -1,0 +1,28 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+=== Business Context
+The Prime-Cuts Booking system provides a web-based application enabling the following actors to interact with the barbershop domain:
+
+* **Customers**: Browse available time slots, book, reschedule, or cancel appointments; manage profiles and view booking history.
+* **Barbers**: View personal schedule, block time slots for breaks or personal use, and see customer notes.
+* **Receptionist**: Book, reschedule, or cancel appointments on behalf of walk-in or calling customers; access customer history.
+* **Barbershop Owner**: Define services (name, duration, price); manage staff profiles and working hours; generate daily/weekly/monthly reports.
+
+The system exchanges domain-specific data (booking requests, staff schedules, service definitions, customer profiles) via its RESTful API.
+
+=== Technical Context
+
+The system exposes its functionality over HTTPS/TLS through the following technical interfaces:
+
+[cols="1,2,2,2",options="header"]
+|===
+| Interface | Channel/Protocol | Consumer | Description
+| SPA Assets Delivery | HTTPS (CDN) | Web Browser/Mobile | Static SPA files (HTML, JS, CSS) delivered via CDN
+| REST API | HTTPS (JSON/HTTP) | SPA Client | CRUD operations for bookings, profiles, services, staff, reports
+| Database Access | TLS-encrypted TCP | Application Server | SQL queries to PostgreSQL (ACID transactions)
+| Cache & Queue | TLS-encrypted TCP | Application Server, Workers | Read/write availability cache and enqueue/dequeue notification jobs via Redis
+| Notification API | HTTPS (JSON/HTTP) | Notification Worker | Outbound calls to Email/SMS providers (e.g. SendGrid, Twilio)
+|===
+
+These interfaces define the boundary between our system and external actors or services. All traffic is secured over TLS, and persistent data is stored in a centralized PostgreSQL database.

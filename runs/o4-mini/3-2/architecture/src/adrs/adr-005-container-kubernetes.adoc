@@ -1,0 +1,19 @@
+= ADR-005: Containerization & Kubernetes Active–Active
+
+== Context
+To achieve high availability, scalability, and standardized deployments across multiple data centers, we need a robust orchestration platform.
+
+== Decision
+We will package all services, connectors, and jobs as Docker containers and deploy them on Kubernetes clusters configured for active–active operation across two data centers. Stateful services (Kafka, databases) will use StatefulSets and cross-DC replication.
+
+== Consequences
+Positive:
+* Automated scaling, self-healing, and rolling upgrades.
+* Uniform deployment and environment consistency.
+
+Negative:
+* Operational complexity of Kubernetes and CRDs.
+* Need for container security and registry management.
+
+Neutral:
+* Standardizes production and testing environments.

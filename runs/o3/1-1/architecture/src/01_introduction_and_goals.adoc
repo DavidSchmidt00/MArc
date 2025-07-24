@@ -1,0 +1,45 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+This document describes the architecture of the “Prime-Cuts Booking” application – a web-based solution that enables customers of a local barbershop to self-serve appointment bookings while providing the owner and staff with an intuitive administration interface.
+
+The architecture documentation follows the arc42 template.
+
+=== Requirements overview
+
+|===
+|ID |Requirement |Source
+|R-F-01 |Customers shall browse available time slots for a chosen service and barber and book an appointment online 24/7. |User Stories
+|R-F-02 |Customers shall receive e-mail and SMS confirmations and reminders 24 h before the appointment. |User Stories
+|R-F-03 |Owner/receptionist shall manage services, prices, staff profiles, working hours and breaks through the admin UI. |User Stories
+|R-F-04 |System shall prevent double-bookings and guarantee consistent appointment data under concurrent access. |ASR – Reliability
+|R-F-05 |Daily/weekly/monthly overviews and service popularity reports shall be available. |User Stories
+|R-NF-01 |Page showing available slots must load within 2 seconds (95-percentile). |Quality Attributes – Performance
+|R-NF-02 |System availability ≥ 99.9 %. |Quality Attributes – Reliability
+|R-NF-03 |Highly usable: customer booking completed in ≤ 3 clicks, UI fully responsive on smartphones. |Quality Attributes – Usability
+|R-NF-04 |Customer PII must be protected (TLS, encryption at rest, RBAC). |Quality Attributes – Security
+|===
+
+=== Quality goals (top 5)
+
+|===
+|Priority |Quality goal |Motivation (concrete scenario)
+|1 |Reliability & Data integrity |Any attempt to create an overlapping appointment for the same barber is rejected; no double-bookings even with 100 concurrent requests.
+|2 |Usability |A first-time customer can finish a booking on a mobile phone within 30 s without guidance.
+|3 |Performance |Slot-availability page renders < 2 s for 95 % of requests at Saturday 10 a.m. peak (≈100 concurrent users).
+|4 |Security & Privacy |All personal data is transmitted via HTTPS and stored encrypted; only authenticated roles may access their respective information.
+|5 |Modifiability |Adding online payments in a future release requires no changes to scheduling logic nor data model for appointments.
+|===
+
+=== Stakeholders
+
+|===
+|Role |Contact |Expectations
+|Barbershop Owner |Jane Doe |Low-maintenance system; clear overview of bookings & reports; easy editing of services and staff.
+|Barber |Team of 4 |Up-to-date personal schedule; ability to block breaks; mobile friendly.
+|Receptionist |John Roe |Fast search & booking on behalf of walk-in/phone customers; conflict-free calendar.
+|Customers |Local clientele |24/7 self-service booking, confirmations & reminders, quick cancellation.
+|Developer Team |Prime-Cuts IT |Understandable architecture and code; automated CI/CD.
+|Operations / DevOps |Managed PaaS provider |Observable, auto-scalable, minimal manual intervention.
+|Regulator (GDPR) |N/A |Compliance with data-protection regulations, right to be forgotten.
+|===

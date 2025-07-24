@@ -1,0 +1,12 @@
+= ADR-009 Disaster Recovery Strategy
+
+== Context
+The CRM must deliver 99.9 % availability and prove disaster recovery capabilities (RTO ≤4 h, RPO ≤15 min).
+
+== Decision
+Deploy an active–passive configuration across Azure West Europe (primary) and North Europe (DR).  Geo-replication is enabled for PostgreSQL, Kafka (MirrorMaker 2), object storage, and ESB runtimes.  Quarterly chaos-engineering drills verify recovery steps.
+
+== Consequences
+* ✅  Meets regulatory and business availability targets.
+* ✅  Documented runbook ensures predictable recovery.
+* ⚠  Additional cloud cost for standby resources (~25 % overhead).

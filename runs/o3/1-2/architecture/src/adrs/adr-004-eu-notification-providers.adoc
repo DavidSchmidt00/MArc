@@ -1,0 +1,19 @@
+= ADR-004 EU-Resident Notification Providers
+:toc:
+
+== Status
+Accepted – 2024-06-26
+
+== Context
+GDPR and project constraint: customer personal data must stay within EU data centres. Email and SMS SaaS providers often default to US regions.
+
+== Decision
+Use providers with EU-region endpoints only:
+* Email – *SendGrid EU* sub-user + `api.eu.sendgrid.com`.
+* SMS – *Twilio EU1* edge (`edge=dublin`) or *Vonage/Nexmo EU*.
+Provider base URL and credentials are injected via environment variables; provider adapters must refuse to start if a non-EU endpoint is configured.
+
+== Consequences
++ Satisfies legal/data-residency requirement.
++ Minimal code impact (just base URL change) thanks to adapter abstraction.
+− Some features (e.g., Twilio Studio) not yet available in EU region; acceptable for MVP.

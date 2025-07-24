@@ -1,0 +1,14 @@
+= ADR-005 Select Keycloak + 3scale for Security & API Gateway
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+Security & Compliance (ASR #3) require RBAC, SSO, fine-grained API scopes, audit logging, and alignment with corporate standards.
+
+== Decision
+Adopt **Keycloak** as the identity provider for OIDC/SAML and **3scale API Gateway** for north-south traffic management. Keycloak issues tokens containing role/scope claims; 3scale enforces them. Kafka OAuth uses Keycloak realm for ACLs.
+
+== Consequences
+* Centralised user management improves security posture.
+* 3scale adds analytics, rate-limiting, and developer portal.
+* Additional operational components but both are supported by Red Hat on OpenShift.

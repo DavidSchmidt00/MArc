@@ -1,0 +1,21 @@
+= ADR-001: Microservices Decomposition
+
+== Context
+
+The system must support independent development, deployment, and scaling of distinct functional areas (Customer, Restaurant, Order, Driver, Payment) by multiple teams. A monolithic architecture would hinder continuous delivery and scaling granularity.
+
+== Decision
+
+We will adopt a microservices architecture. Each core domain will be implemented as an independent service with its own datastore and CI/CD pipeline. Services will communicate synchronously via REST/gRPC for request/response interactions and asynchronously via an event bus for domain events.
+
+== Consequences
+
+* Positive:
+** Independent deployability allows teams to release features without cross-team coordination.
+** Fine-grained scaling of services reduces resource costs under variable load.
+** Clear service boundaries improve maintainability and fault isolation.
+
+* Negative:
+** Operational complexity increases (service discovery, distributed tracing, network latency).
+** Data consistency challenges across service boundaries.
+** Increased need for automation and orchestration.

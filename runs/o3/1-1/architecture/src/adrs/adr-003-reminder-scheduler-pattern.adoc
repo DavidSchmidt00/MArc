@@ -1,0 +1,28 @@
+= ADR-003 Reliable 24-h Reminder Scheduling via EventBridge + SQS Delayed Messages
+
+== Context
+
+The system must send reminders 24 hours before each appointment. AWS SQS supports up to 15-minute delays; we need near-exact 24-hour scheduling without running a permanent scheduler service.
+
+Options:
+
+1. Cron job scanning DB every minute (costly, potential race conditions).
+2. Use a specialised scheduler service (e.g., Quartz, Temporal) – increases ops complexity.
+3. Two-stage scheduling: periodic EventBridge rule scans for appointments starting in 24 h and enqueues an SQS message with remaining delay (≤15 min). Lambda worker processes queue.
+
+== Decision
+
+Adopt option 3: 
+
+* EventBridge rule triggers every 10 minutes.
+* Lambda scan queries appointments with start time between now+24 h and now+24 h+10 min.
+* For each match, publish to `reminder-due` SQS with `DelaySeconds = appointment_start − (now + 24 h)`.
+* Worker Lambda consumes queue, sends e-mail/SMS via SendGrid/Twilio. DLQ captures failures; CloudWatch alarm on DLQ >0.
+
+== Consequences
+
++ Serverless, pay-per-use, no always-on scheduler maintenance.
++ At-least-once delivery; idempotent token prevents duplicates.
++ Acceptable timing precision (≤10 min) for business needs.
+− Complexity spread across two Lambdas and EventBridge rule.
+− Dependent on AWS services (vendor lock-in mitigated by abstraction layer).

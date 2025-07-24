@@ -1,0 +1,17 @@
+@startuml
+actor Customer
+participant SPA as "React SPA"
+participant Backend as "Node.js Backend"
+database DB as PostgreSQL
+queue MQ as RabbitMQ
+participant Worker as NotificationWorker
+Customer -> SPA: Book Appointment Form
+SPA -> Backend: POST /appointments
+activate Backend
+Backend -> DB: INSERT appointment + outbox (tx)
+Backend -->> SPA: 201 Created
+Backend --> MQ: OutboxRelay publishes AppointmentCreated
+deactivate Backend
+Worker -> MQ: consume event
+Worker -> Worker: send email+sms (SendGrid / SMS)
+@enduml

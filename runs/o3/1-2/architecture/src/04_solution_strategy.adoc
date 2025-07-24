@@ -1,0 +1,23 @@
+= 4. Solution Strategy
+:toc:
+
+*Modular Monolith with Hexagonal Architecture*
+Keeps deployment simple and low-cost while establishing clear internal boundaries so modules can later be extracted as micro-services.
+
+*PostgreSQL + Exclusion Constraint for Conflict-Free Booking*
+Guarantees no overlapping appointments per barber via GiST index; simple retry logic handles contention.
+
+*Transactional Outbox + RabbitMQ*
+Ensures reliable delivery of domain events even if the message broker is unavailable at commit time.
+
+*React SPA*
+Provides responsive, mobile-first UI with rapid interactions (<2 s slot query).
+
+*Managed PaaS Infrastructure*
+Heroku/AWS Fargate etc. reduce ops burden; Cloudflare CDN terminates TLS.
+
+*EU-Resident SaaS Notification Providers*
+SendGrid EU and Twilio/Vonage EU comply with GDPR data-residency constraints.
+
+*Observability Built-In*
+Health probes, Prometheus metrics, structured logs; alerting on uptime, queue depth, booking conflicts.

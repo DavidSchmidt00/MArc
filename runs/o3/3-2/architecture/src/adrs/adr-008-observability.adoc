@@ -1,0 +1,12 @@
+= ADR-008 Observability & SLA Monitoring
+
+== Context
+ASR #13 requires centralised logging, distributed tracing, SLA dashboards, and 1-minute alerting on violations.
+
+== Decision
+Adopt Micrometer → Prometheus → Grafana stack for metrics; Loki for logs; Jaeger for tracing.  Alertmanager routes critical alerts to Ops and Teams chat with ≤1 minute latency.
+
+== Consequences
+* ✅  Uniform instrumentation across all JVM services.
+* ✅  Objective SLO tracking and early warning for degradations.
+* ⚠  Need to manage metrics cardinality and storage retention.

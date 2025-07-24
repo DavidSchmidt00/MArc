@@ -1,0 +1,19 @@
+= ADR-003: Legacy Integration via ESB and ACL
+
+== Context
+Multiple legacy systems (mainframe, Java claims, AS/400 billing, Teradata DWH) with distinct protocols and data models must integrate with the new CRM without tightly coupling.
+
+== Decision
+We will route all legacy interactions through the corporate ESB and encapsulate protocol handling in ESB connectors. An Anti-Corruption Layer (ACL) between the ESB and CRM microservices will map legacy data models to the CRM’s canonical domain model.
+
+== Consequences
+Positive:
+* Isolation of legacy complexities.
+* Centralized retry, DLQ, and monitoring of legacy calls.
+
+Negative:
+* Added latency for ACL transformations.
+* Extra layer to maintain and test.
+
+Neutral:
+* Enforces clear separation between new and old domains.

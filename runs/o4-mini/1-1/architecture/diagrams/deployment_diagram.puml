@@ -1,0 +1,19 @@
+@startuml
+skinparam componentStyle rectangle
+
+database "PostgreSQL (Multi-AZ)" as DB
+queue "Redis (Cache & Queue)" as REDIS
+node "App Server Pool (Node.js/Express)" as APP
+node "Load Balancer / API Gateway" as LB
+node "CDN (S3 + CloudFront)" as CDN
+node "External Email/SMS Providers" as EXT
+
+title Deployment View - Prime-Cuts Booking
+
+CDN --> LB : HTTPS
+LB --> APP : HTTPS
+APP --> DB : JDBC (TLS)
+APP --> REDIS : TCP (TLS)
+APP --> EXT : API Calls
+
+@enduml

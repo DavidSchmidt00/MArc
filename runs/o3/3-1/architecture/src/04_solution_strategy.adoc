@@ -1,0 +1,67 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+The solution strategy captures the core ideas and key decisions that shape the overall architecture of *InsureSphere CRM*.
+It gives stakeholders an at-a-glance understanding of _how_ we intend to reach the project goals and satisfy the architecturally significant requirements (ASRs).
+
+=== 1. Architectural Style
+
+* Domain-oriented **microservices** deployed as Docker containers on OpenShift 4.x
+* **Event-driven** integration via Apache Kafka with Avro-encoded, schema-managed topics
+* **Backend-for-Frontend (BFF)** pattern for tailor-made APIs per persona (Agent, Support, Admin)
+* **API- and Event-centric** interfaces; REST/GraphQL for synchronous calls, Kafka topics for asynchronous communication
+* **Strangler-Fig** approach to phase out legacy front-office applications
+
+=== 2. Key Technology Decisions
+
+|===
+|Area | Decision | Rationale | ASRs covered
+
+| Integration Hub
+| Apache Camel-K (Kubernetes-native Camel operator)
+| Open-source, developer familiarity, light runtime; aligns with existing Spring skill set; runs natively in OpenShift service mesh
+| Integration #1, Reliability #4, Modularity #7
+
+| Messaging Backbone
+| Apache Kafka (Strimzi operator) with Confluent Schema Registry
+| High throughput, exactly-once semantics, rich ecosystem (Debezium, MirrorMaker2)
+| Integration #1, Consistency #2, Auditability #8, Reliability #4
+
+| Consistency Mechanism
+| Dual-mode: (a) **LRA-based 2-phase commit** for *strong* entities (address, policy status); (b) **Outbox/Saga** for eventual consistency
+| Balances latency vs. integrity; avoids global locking except where mandated
+| Consistency #2, Reliability #4
+
+| Security & Access Control
+| **Keycloak** for SSO (OIDC/SAML) + **3scale** API Gateway; Kafka OAuth with fine-grained ACLs
+| Centralised RBAC, GDPR consent scopes, rate limiting, audit trails
+| Security #3, Auditability #8
+
+| Data Privacy
+| **Cryptographic Delete** – field-level AES-256 encryption with per-customer DEK stored in Vault
+| Enables GDPR right-to-erasure while preserving immutable audit log
+| Security #3, Auditability #8
+
+| Disaster Recovery
+| Active/Passive OpenShift regions; PostgreSQL logical replication, Kafka MirrorMaker2, ArgoCD automated fail-over
+| Meets 99.9 % uptime SLA, RPO 5 min, RTO 15 min
+| Reliability #4
+|===
+
+=== 3. Architecture Overview (Container View)
+
+image::diagrams/container-view.svg[align="center",opts="inline"]
+
+=== 4. How the Strategy Addresses Quality Goals
+
+* **Integration & Interoperability** – Canonical events on Kafka + Camel-K Anti-Corruption Layers hide legacy protocols.
+* **Security & Compliance** – Keycloak/3scale enforce RBAC; Vault manages secrets; encrypted data-at-rest in DB & Kafka.
+* **Data Consistency** – Strong consistency where legally required; eventual elsewhere; all changes are auditable.
+* **Reliability & Availability** – HA clusters, regional DR, service-mesh resilience (circuit breakers, retries).
+* **Performance & Scalability** – Horizontal pod auto-scaling, Redis caching, Elasticsearch search index; P95 latency budget ≤ 2 s.
+
+=== 5. Alternatives Considered
+
+* *Monolithic* application – rejected due to integration complexity and phased migration needs.
+* *MuleSoft* for the Integration Hub – rejected because of license costs and heavyweight runtime.
+* *Full XA/2PC everywhere* – rejected for throughput concerns; adopted selective strong consistency instead.

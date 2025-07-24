@@ -1,0 +1,21 @@
+= ADR-003 Transactional Outbox with RabbitMQ
+:toc:
+
+== Status
+Accepted – 2024-06-26
+
+== Context
+Booking operations must emit events (AppointmentCreated, Changed, ReminderNeeded) that drive notifications and future integrations. If the message queue is unavailable at commit time, events could be lost or require complex 2-phase commits.
+
+== Decision
+Adopt the *Transactional Outbox* pattern:
+1. Within the same database transaction that mutates business data, insert a row into `notification_outbox` table.
+2. A separate *OutboxRelay* worker polls unsent rows and publishes them to RabbitMQ, marking rows as sent in its own transaction.
+3. RabbitMQ provides durable queues; Notification Worker consumes and processes messages.
+
+== Consequences
++ Events are stored atomically with domain data → never lost.
++ Decouples booking latency from external MQ/API availability.
++ Simpler than XA/2PC; compatible with PostgreSQL.
+− Requires an additional polling process and table cleanup.
+− Slight replication lag (<1 s) between event creation and delivery.

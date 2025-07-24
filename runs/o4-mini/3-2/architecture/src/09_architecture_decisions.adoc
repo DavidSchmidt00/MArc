@@ -1,0 +1,19 @@
+[[section-architecture-decisions]]
+== Architecture Decisions
+
+This section catalogs the Architecture Decision Records (ADRs) for significant decisions made during the design of InsureSphere CRM.
+
+[options="header",cols="1,2,3"]
+|===
+|ADR|Title|Status
+|adr-001-service-architecture.adoc|Microservices & Hexagonal Architecture|Accepted
+|adr-002-event-driven-integration.adoc|Event-Driven Integration with Kafka|Accepted
+|adr-003-esb-acl-integration.adoc|Legacy Integration via ESB and ACL|Accepted
+|adr-004-api-gateway.adoc|API Gateway for External Exposure|Accepted
+|adr-005-container-kubernetes.adoc|Containerization & Kubernetes Active–Active|Accepted
+|adr-006-oauth2-rbac.adoc|OAuth2/OIDC Authentication & RBAC|Accepted
+|adr-007-tls-aes-encryption.adoc|TLS & AES Encryption with Audit Logging|Accepted
+|adr-008-cdc-pipeline.adoc|Change Data Capture (CDC) Pipeline|Accepted
+|adr-009-ci-cd-strategy.adoc|CI/CD with Blue-Green & Canary Deployments|Accepted
+|adr-010-monitoring-observability.adoc|Centralized Monitoring & Observability|Accepted
+|===

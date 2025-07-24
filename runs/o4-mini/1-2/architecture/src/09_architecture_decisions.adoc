@@ -1,0 +1,6 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+* xref:adrs/adr-001-monolithic-backend.adoc[ADR-001: Monolithic Backend Architecture]
+* xref:adrs/adr-002-spa-frontend.adoc[ADR-002: SPA Frontend Architecture]
+* xref:adrs/adr-003-event-driven-integration.adoc[ADR-003: Event-Driven Integration for Asynchronous Tasks]

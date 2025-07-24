@@ -1,0 +1,19 @@
+= ADR-002 Event Backbone using Apache Kafka
+
+Date: 2024-03-15
+
+== Status
+Accepted
+
+== Context
+Real-time requirements dictate propagation of order status and driver location within 2 seconds. A message broker is required for loose coupling between services. Alternatives considered: RabbitMQ, AWS SNS/SQS, Google Pub/Sub.
+
+== Decision
+Adopt Apache Kafka (AWS MSK managed) as the central event backbone. Events will use Protobuf schemas with a Schema Registry. Partitions will be sized per domain (e.g., order-id hash, geohash for GPS) to ensure scalability.
+
+== Consequences
+* ✅ High throughput & low latency suitable for GPS streams.
+* ✅ Replay capability for CQRS read models & analytics.
+* ✅ Broad ecosystem support (Kafka Streams, ksqlDB).
+* ⚠️ Operational overhead (topic management, partition sizing).
+* ⚠️ Requires exactly-once semantics config for payment events.

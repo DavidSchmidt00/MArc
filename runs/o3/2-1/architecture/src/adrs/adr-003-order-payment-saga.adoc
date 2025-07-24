@@ -1,0 +1,44 @@
+= ADR-003 Orchestrated Saga for Order, Payment and Dispatch
+
+Date: 2024-03-15
+
+== Status
+Accepted
+
+== Context
+The "Fork & Knife" platform coordinates order placement, payment processing, and driver dispatch across three independent microservices that each own their data store (Order Service, Payment Service, Dispatch Service). A classical distributed transaction (2-PC) is impossible because of service autonomy, database heterogeneity and scalability constraints (ASR-C01, N01). We therefore need an application-level mechanism that guarantees eventual consistency, compensates on failures and keeps user-visible status accurate within the 2-second real-time SLA (ASR-F01).
+
+== Decision
+We will implement an *orchestrated saga* whose coordinator lives inside the Order Service.  The saga progresses through the following steps:
+
+. Persist NEW order and publish `OrderCreated` event (outbox pattern).
+. Synchronously call Payment Service to `AuthorizeCharge` (with timeout + retries).  
+   • On success, continue.  
+   • On failure, mark order `PAYMENT_FAILED`, publish event, end saga.
+. Call Dispatch Service `RequestDelivery` (sync).
+. Wait for `DriverAssigned` (success) or `AssignmentFailed`/timeout (failure) from the dispatch event stream.
+. On success, set order `DISPATCHED`, publish `OrderDispatched`, capture payment later (separate business rule).  
+   On failure, trigger `Refund` in Payment Service and mark order `CANCELLED`.
+
+Each step outcome is stored in a `order_saga` table so the orchestrator can resume after crashes.  Messages that cross service boundaries use Kafka topics with exactly-once semantics; reliability inside each service is ensured via Outbox/Inbox/CDC.
+
+== Consequences
+Positive:
+* ✅ Guarantees eventual consistency without global lock or 2-PC.
+* ✅ Clear compensation logic keeps financial data correct (PCI requirement, ASR-F03).
+* ✅ Orchestrator locality (in Order Service) simplifies state tracking and enables change by Customer squad without touching Payment/Logistics teams (ASR-N05).
+* ✅ Fits existing event backbone (ADR-002).
+
+Negative/Trade-offs:
+* ⚠️ Additional code complexity; requires robust state machine and test coverage.
+* ⚠️ Orchestrator crash-recovery logic must be carefully implemented.
+* ⚠️ Cross-team coordination on event contracts and versioning.
+
+== Alternatives Considered
+* *Choreographed saga* (pure event chain without central coordinator) – rejected because business workflow contains branching logic and compensations that would scatter across services, complicating maintenance and observability.
+* *Two-Phase Commit* – rejected due to heterogeneous data stores, runtime latency, and vendor lock-in.
+* *Local transaction only + periodic reconciler* – rejected because it violates real-time status SLA and would expose customers to inconsistent states.
+
+== References
+* High-Level Architecture (Container View) – section 5.
+* Runtime View – Order & Payment Saga sequence diagram.

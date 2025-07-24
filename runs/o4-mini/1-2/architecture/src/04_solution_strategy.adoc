@@ -1,0 +1,23 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+We adopt a layered, monolithic architecture comprising a responsive SPA frontend and a single backend codebase. Key strategic decisions:
+
+* Technology Stack
+** Frontend: React or Vue.js SPA for mobile-first, responsive UI
+** Backend: Node.js/Express or Python/Django for rapid development and ACID scheduling transactions
+** Persistence: PostgreSQL (primary + read replicas) and Redis for caching and job queuing
+
+* Architectural Patterns
+** Layered pattern to separate presentation, API, domain, and persistence concerns.
+** CQRS for reporting: read-optimized queries vs. write-side booking logic
+** Event-driven integration (job queue) to decouple notifications and enable future extensibility (e.g., payments)
+** Cache-aside strategy (Redis) for availability queries to satisfy performance SLAs.
+
+* Quality Goals and Operational Strategy
+** Reliability: Kubernetes (or VM auto-scaled) deployments behind load balancer, automated failover and health checks (99.5% uptime).
+** Scalability: Stateless app servers, Redis-backed queue, DB replicas for read scaling.
+** Security: TLS everywhere, JWT/session security, PII encrypted at rest, KMS-managed keys.
+** Monitoring: Prometheus/Grafana for metrics; ELK for logs; alerts on high error/queue spike.
+
+This strategy ensures the system meets usability, performance, reliability, and security requirements while remaining simple to operate and extend.

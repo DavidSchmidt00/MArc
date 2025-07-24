@@ -1,0 +1,35 @@
+= 1. Introduction and Goals
+
+Fork & Knife is a food-delivery platform that connects customers, restaurants and delivery drivers.  It aims to provide a restaurant-friendly alternative to high-commission incumbents while delivering a real-time, reliable ordering and logistics experience for customers and drivers.
+
+== 1.1 Requirements Overview
+
+The following Architecturally Significant Requirements (ASRs) drive the solution:
+
+* Scalability to 10 000 concurrent orders and 100 000 active users (burst)
+* Near real-time (<2 s P95) order-status propagation and driver-location tracking
+* 99.95 % platform / 99.99 % payment availability
+* PCI-DSS compliance without storing card data
+* GDPR support including right-to-be-forgotten within 30 days
+* Maintainability – autonomous teams per domain and independent deployments
+* Disaster recovery RPO ≤ 5 min, RTO ≤ 30 min
+
+== 1.2 Quality Goals for the Architecture
+
+|===
+|Priority |Quality Goal |Motivation
+|1 |Real-time responsiveness |Core user experience – live order tracking and dispatch depend on sub-second event propagation.
+|2 |Scalability |Lunch/dinner peaks cause flash traffic; the platform must scale horizontally without service degradation.
+|3 |Reliability & Availability |Platform downtime immediately impacts revenue and brand trust; payments are business-critical.
+|4 |Security & Compliance |Handling payments and personal data mandates strict PCI/GDPR adherence.
+|5 |Maintainability & Team Autonomy |Rapid feature delivery across separate marketplace domains.
+|===
+
+== 1.3 Stakeholders
+
+* Customers
+* Restaurant owners / managers
+* Delivery drivers
+* Platform administrators & support
+* Development & DevOps teams
+* Regulatory bodies (PCI assessors, GDPR authorities)

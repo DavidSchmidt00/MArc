@@ -1,0 +1,49 @@
+[[section-quality-scenarios]]
+== Quality Requirements
+
+This section complements the primary quality objectives (Section 1.2) with a quality tree and concrete scenarios that serve as benchmarks during implementation and acceptance.
+
+=== Quality Tree
+
+[plantuml, quality-tree, svg]
+----
+@startmindmap
+* Quality
+** Functionality
+*** Integration
+*** Security
+*** Compliance
+** Reliability
+*** Availability
+*** Disaster Recovery
+** Performance
+*** Response Time
+*** Throughput
+** Usability
+*** Learnability
+*** Accessibility
+** Maintainability
+*** Testability
+*** Modifiability
+** Portability
+*** Deployability
+@endmindmap
+----
+
+The branches reflect the ISO-25010 quality model tailored to the ASRs.  Leafs link to the scenarios below.
+
+=== Quality Scenarios
+
+|===
+| No. | Quality Attribute | Scenario Type | Stimulus & Environment | Expected Response (Acceptance Criteria)
+| Q1 | Performance – Response Time | Usage | A sales agent requests the Customer 360 Dashboard during peak load (25 000 rpm). | 95 % of requests return within 3 s; 99 % ≤ 5 s.
+| Q2 | Performance – Propagation Latency | Usage | Address change submitted in CRM UI. | Update propagated to Policy, Billing, Claims within 5 min (P95) with exactly-once semantics.
+| Q3 | Reliability – Availability | Usage | Any single service crashes unexpectedly. | Overall system remains ≥99.9 % available monthly; graceful degradation: read-only mode if legacy write path fails.
+| Q4 | Disaster Recovery | Change | Complete primary region outage. | Full service restored in DR region within 4 h (RTO) and ≤15 min data loss (RPO).
+| Q5 | Security – Confidentiality | Usage | Unauthorized user attempts to access customer PII via REST API. | Access denied (HTTP 403); attempt logged and alerted within 1 min.
+| Q6 | Security – Auditability | Usage | Regulator requests audit log for customer #123 within last 3 years. | Operator can retrieve tamper-proof log within 10 min.
+| Q7 | Usability – Learnability | Usage | Novice support rep uses system first time. | Can complete customer search and add interaction in ≤3 min without formal training.
+| Q8 | Accessibility | Usage | User with screen reader navigates key flows. | WCAG 2.1 AA compliance verified by automated a11y tests.
+| Q9 | Maintainability – Modifiability | Change | Add new marketing attribute to Customer aggregate. | Attribute available through API & UI in ≤3 Person-Days; requires only adapter + projection extension.
+| Q10 | Portability – Deployability | Change | Deploy new microservice version during business hours. | Zero downtime; ≤1 % request error spike during rollout.
+|===

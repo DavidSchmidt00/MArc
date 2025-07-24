@@ -1,0 +1,35 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+This section summarizes the high-level design decisions and architectural approach for Prime-Cuts Booking. It outlines how the system will fulfill the key requirements and constraints through a cohesive solution strategy.
+
+=== Architectural Style and Decomposition
+* Monolithic, layered architecture (Presentation, API, Business Logic, Data Access) deployed as a two-tier system (SPA frontend & backend monolith).
+* Clear separation of concerns: each layer focuses on a specific responsibility (e.g., REST controllers vs. business rules vs. persistence).
+* Modular, domain-aligned packages (e.g., Booking, User Management, Staff, Services, Reporting).
+
+=== Data Management Strategy
+* Relational persistence using PostgreSQL for ACID transactions and complex queries (bookings, schedules, reporting).
+* Redis as a distributed cache for availability queries and as a job queue for asynchronous notifications and reporting tasks.
+
+=== Scalability and Performance
+* Stateless backend instances behind a load balancer/API gateway for horizontal scale.
+* CDN for static SPA delivery to minimize latency and improve global reach.
+* Caching of availability results and throttling of expensive operations to maintain P95 API latency ≤ 2s.
+
+=== Resilience and Reliability
+* ACID-consistent booking operations with distributed locking (Redis) to prevent double-bookings.
+* Automated backups and multi-AZ deployment of PostgreSQL.
+* Monitoring, health checks, and auto-restart policies for containerized backend services.
+
+=== Security and Compliance
+* All transport secured via TLS; JWT-based authentication and RBAC for API endpoints.
+* Encryption of sensitive customer/staff data at rest; GDPR-compliant data management.
+
+=== Asynchrony and Integration
+* Background workers (within the same codebase) subscribe to Redis job queues for sending email and SMS notifications, and for generating reports.
+* Integrations with third-party providers (SendGrid, Twilio) abstracted behind service interfaces to allow future extensions.
+
+=== Deployment and Operations
+* Containerized deployment (Docker) orchestrated in Kubernetes (or equivalent), Infrastructure-as-Code for reproducibility.
+* Centralized logging and metrics (Prometheus, Grafana, ELK) for observability and SLA monitoring.

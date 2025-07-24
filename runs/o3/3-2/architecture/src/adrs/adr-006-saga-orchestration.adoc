@@ -1,0 +1,12 @@
+= ADR-006 Saga Orchestration with Camunda 8
+
+== Context
+Address change, FNOL, and quote generation span multiple services and legacy systems with potential partial failures and long-running transactions.
+
+== Decision
+Implement Sagas using Camunda 8 as the workflow engine.  Each step is triggered by events; compensating actions are defined for rollback.  Timeouts escalate to human tasks.
+
+== Consequences
+* ✅  Clear visibility and monitoring of business processes.
+* ✅  Standardised compensation logic across workflows.
+* ⚠  Additional infrastructure (Camunda cluster) and modelling effort.

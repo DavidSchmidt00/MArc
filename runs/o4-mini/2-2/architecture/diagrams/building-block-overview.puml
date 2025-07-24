@@ -1,0 +1,35 @@
+@startuml
+skinparam componentStyle uml2
+
+node "API Gateway" as APIGW
+
+package Services {
+  [Identity Service] as IS
+  [Customer Service] as CS
+  [Restaurant Service] as RS
+  [Order Service] as OS
+  [Driver Service] as DS
+  [Payment Service] as PS
+  [Notification Service] as NS
+  [Reporting Service] as RepoS
+  [Mapping Adapter] as MA
+  [Payment Adapter] as PA
+}
+
+database "Event Broker\n(Kafka/RabbitMQ)" as EB
+
+APIGW --> IS
+APIGW --> CS
+APIGW --> RS
+APIGW --> OS
+APIGW --> DS
+APIGW --> PS
+CS --> OS
+RS --> OS
+OS --> EB
+DS --> EB
+EB --> NS
+RepoS --> EB
+MA <--> RS
+PA <--> PS
+@enduml

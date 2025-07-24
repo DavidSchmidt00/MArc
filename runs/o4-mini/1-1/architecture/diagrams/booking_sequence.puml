@@ -1,0 +1,37 @@
+@startuml
+actor Customer
+participant "SPA Client" as SPA
+participant "API Server" as API
+participant "Booking Engine" as BE
+participant "PostgreSQL DB" as DB
+participant "Redis Cache & Queue" as REDIS
+participant "Notification Worker" as NM
+participant "Email/SMS Provider" as EXT
+
+== Availability Lookup ==
+Customer -> SPA : Select date & service
+SPA -> API : GET /bookings/availability
+API -> REDIS : GET availability:<staff_id>:<date>
+alt cache miss
+API -> BE : computeAvailability()
+BE -> DB : SELECT staff schedules, services
+BE -> REDIS : SET availability cache
+end
+API -> SPA : return available slots
+
+== Booking Flow ==
+Customer -> SPA : Choose slot & confirm
+SPA -> API : POST /bookings { staffId, serviceId, time }
+API -> BE : createBooking()
+BE -> REDIS : LOCK staff:<staff_id>:<timeslot>
+BE -> DB : INSERT booking (ACID)
+BE -> REDIS : UNLOCK staff:<staff_id>:<timeslot>
+BE -> REDIS : RPUSH notifications queue
+BE -> API : return booking confirmation
+API -> SPA : display confirmation
+
+== Notification Worker ==
+NM -> REDIS : BLPOP notifications queue
+NM -> EXT : send email/SMS confirmation
+
+@enduml

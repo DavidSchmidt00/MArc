@@ -1,0 +1,14 @@
+@startuml
+package "Order Service" {
+ component "Order Controller" as C1
+ component "Order Saga Orchestrator" as C2
+ component "Order Repository" as C3
+ component "Event Publisher" as C4
+}
+
+C1 --> C2 : start order workflow
+C2 --> C3 : persist state
+C2 --> C4 : emit OrderCreated event
+C2 --> "Payment Service" : initiate payment
+C2 --> "Logistics Service" : request driver assignment
+@enduml

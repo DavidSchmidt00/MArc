@@ -1,0 +1,38 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+To address the business needs and architectural drivers for InsureSphere CRM, we adopt the following overarching strategies:
+
+=== Microservices & Hexagonal Architecture
+• Decompose domain into bounded contexts (Customer, Policy, Claims, Interaction, Marketing, Risk).  
+• Implement each context as an independent microservice with clear inbound/outbound ports and adapters.  
+• Isolate business logic from frameworks and infrastructure concerns for testability and maintainability.
+
+=== Event-Driven Data Propagation
+• Use Kafka as the event backbone to ensure near-real-time data consistency (≤5min SLA).  
+• Producers (microservices and legacy CDC feeds) publish domain events (e.g., CustomerUpdated).  
+• Consumers subscribe to topics to update local stores, caches, or trigger workflows.
+
+=== API Gateway & ESB Integration
+• Front public APIs through an API Gateway for routing, authentication, rate-limiting, and logging.  
+• Legacy system interactions are encapsulated in ESB adapters (MQ, SOAP, batch) behind the ACL.  
+• This separation ensures modern protocols for CRM-exclusive endpoints and legacy-specific protocols remain decoupled.
+
+=== Anti-Corruption Layer (ACL)
+• Introduce an ACL between ESB adapters and CRM microservices to map legacy models to the canonical domain model.  
+• Provides validation, enrichment, error handling, and shielding from legacy inconsistencies.
+
+=== Stateless Containers & Kubernetes
+• Package microservices, ESB connectors, and ancillary services in Docker containers.  
+• Deploy to Kubernetes for auto-scaling, self-healing, and active–active across two data centers.
+
+=== Security & Compliance by Design
+• Implement OAuth2/OIDC for authentication, enforce RBAC in the Gateway and services.  
+• Encrypt all data in transit with TLS 1.2+ and at rest with AES-256.  
+• Centralize audit logs for all PII operations and ensure traceability.
+
+=== CI/CD & Observability
+• Use automated pipelines (build→test→canary→production) for all services.  
+• Integrate Prometheus, ELK, and Jaeger for full-stack observability and alerting.  
+
+This strategy directly addresses the key quality goals: interoperability, data integrity, security, availability, performance, and usability.

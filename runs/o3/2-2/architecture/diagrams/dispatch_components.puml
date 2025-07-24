@@ -1,0 +1,30 @@
+@startuml
+skinparam componentStyle rectangle
+package "Dispatch / Logistics Service" {
+  [API Adapter Layer]
+  [Location Ingestor]
+  [Driver State Manager]
+  [Matching Engine]
+  [Job Offer Manager]
+  [Acceptance Processor]
+  [Route Optimiser]
+  [Config Watcher]
+}
+[Redis Cluster] as Redis #palegreen
+[Postgres] as PG #palegreen
+[Kafka] #palegreen
+
+[Location Ingestor] --> Redis : updateGeo(lat,lng)
+[Matching Engine] --> Redis : geoRadius()
+[Driver State Manager] --> PG : write status
+[Acceptance Processor] --> PG : assignment + outbox
+[API Adapter Layer] --> [Driver State Manager]
+[API Adapter Layer] --> [Config Watcher]
+[Job Offer Manager] --> [Acceptance Processor]
+
+[Location Ingestor] --> Kafka : produce driver-location
+[Matching Engine] ..> Kafka : consume order-created
+[Job Offer Manager] --> Kafka : produce job-offer
+[Acceptance Processor] --> Kafka : produce order-assigned
+
+@enduml

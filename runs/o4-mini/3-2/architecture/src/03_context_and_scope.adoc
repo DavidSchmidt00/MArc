@@ -1,0 +1,30 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+This section describes the system in its environment and identifies the relevant external systems and stakeholders.
+
+=== System Scope
+The InsureSphere CRM serves as the central front-office application for all customer-related activities within the insurance company. It replaces multiple legacy customer-facing UIs and fosters a unified interaction. It does not replace core policy or claims business logic; rather, it integrates and orchestrates interactions with existing systems.
+
+=== External Entities
+[options="header",cols="1,3,3"]
+|===
+|External Entity|Description|Interaction
+|Mainframe Policy System|Legacy policy management on an IBM mainframe|Query/update policy data via ESB (MQ/REST)
+|Java Claims System|Existing claims processing application|Initiate FNOL workflow; fetch claims history (SOAP/REST)
+|AS/400 Billing System|Legacy billing & invoicing on AS/400|Fetch billing data, scheduled batch updates
+|Teradata Data Warehouse|Corporate analytics platform|CDC-based near-real-time data feed into CRM
+|Marketing Cloud|External email marketing platform|Export/import dynamic customer segments
+|Identity Provider (OAuth2/OIDC)|Authentication and authorization service|User login, role assignment, JWT issuance
+|Prometheus / ELK / Jaeger|Monitoring & observability tools|Metrics, logs, and traces ingestion
+|===
+
+=== Key Interfaces
+* RESTful APIs exposed by CRM for all client interactions (search, dashboard, alerts)
+* GraphQL (optional) for advanced segmentation queries
+* Event bus (Kafka topics) for internal event distribution (e.g., CustomerUpdated)
+* ESB endpoints for legacy integration
+
+=== In-Scope vs Out-of-Scope
+*In Scope*: Front-end SPA, API Gateway, CRM microservices, ESB adapters, data migration pipeline, monitoring, security, and compliance features.
+*Out of Scope*: Core policy/claims/billing business logic; external data warehouse transformations not related to CRM; standalone marketing automation beyond segment export.

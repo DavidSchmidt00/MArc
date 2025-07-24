@@ -1,0 +1,12 @@
+= ADR-003 Communication Paradigm
+
+== Context
+Services require low coupling and horizontal scalability.  Some interactions are synchronous queries from the React UI, others are business events requiring reliable asynchronous propagation.  Legacy systems can be offline or batch-only.
+
+== Decision
+Cross-service interactions will be asynchronous events on Confluent Kafka (CloudEvents).  Synchronous read paths use REST for CRUD or aggregated GraphQL via a BFF.  No direct synchronous write calls between microservices.
+
+== Consequences
+* ✅  Services are decoupled in time and location; easier evolution.
+* ✅  Natural audit trail of immutable events.
+* ⚠  Additional eventual-consistency complexity; addressed via Sagas and UI state indicators.

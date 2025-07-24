@@ -1,0 +1,68 @@
+[[section-runtime-view]]
+== Runtime View
+
+This view illustrates key runtime scenarios, including request flows, background processing, and event handling. It demonstrates how building blocks collaborate at runtime.
+
+=== Scenario: Customer Places an Order
+
+[plantuml,order_scenario,svg]
+----
+@startuml
+actor Customer
+boundary APIGateway
+control OrderService
+auth AuthenticationService
+control PaymentService
+node Kafka
+control DriverService
+
+Customer -> APIGateway: POST /orders
+APIGateway -> auth: validate token
+auth --> APIGateway: valid
+APIGateway -> OrderService: createOrder(request)
+activate OrderService
+OrderService -> PostgreSQL: INSERT order
+OrderService -> PaymentService: initiatePayment(order)
+activate PaymentService
+PaymentService -> StripeAPI: charge
+StripeAPI --> PaymentService: success
+PaymentService --> OrderService: paymentConfirmed
+deactivate PaymentService
+OrderService -> Kafka: publish OrderCreated
+OrderService --> APIGateway: 201 Created
+deactivate OrderService
+
+==> on OrderCreated event
+activate DriverService
+Kafka -> DriverService: OrderCreated
+DriverService -> Kafka: DriverAssigned
+deactivate DriverService
+
+@enduml
+----
+
+=== Scenario: Real-Time Driver Tracking
+
+[plantuml,driver_tracking,svg]
+----
+@startuml
+actor DriverApp
+boundary APIGateway
+control DriverService
+node Kafka
+control NotificationService
+actor CustomerApp
+
+DriverApp -> APIGateway: WS msg: locationUpdate
+APIGateway -> DriverService: updateLocation
+activate DriverService
+DriverService -> MongoDB: update geo-location
+DriverService -> Kafka: publish DriverLocationUpdated
+deactivate DriverService
+
+Kafka -> NotificationService: DriverLocationUpdated
+activate NotificationService
+NotificationService --> CustomerApp: WS msg locationUpdate
+deactivate NotificationService
+@enduml
+----

@@ -1,0 +1,18 @@
+= ADR-006: OAuth2/OIDC Authentication & RBAC
+
+== Context
+The CRM solution handles sensitive personal and financial data requiring strict authentication, authorization, and auditability according to GDPR and BaFin regulations.
+
+== Decision
+We will integrate with the corporate OAuth2/OIDC Identity Provider (Keycloak) for authentication and use JWT tokens with embedded RBAC claims. Each service and the API Gateway will validate tokens and enforce role-based access control.
+
+== Consequences
+Positive:
+* Centralized user and role management.
+* Consistent security policies across services.
+
+Negative:
+* Dependency on the IDP’s availability and configuration.
+
+Neutral:
+* Aligns with corporate security standards.

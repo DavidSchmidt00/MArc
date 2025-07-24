@@ -1,0 +1,23 @@
+@startuml
+actor "Customer" as Customer
+actor "Restaurant Manager" as Restaurant
+actor "Delivery Driver" as Driver
+actor "Platform Admin" as Admin
+
+rectangle "Fork & Knife Platform" {
+  rectangle "Customer App (Web/iOS/Android)" as CustApp
+  rectangle "Restaurant Portal" as RestPortal
+  rectangle "Driver App" as DriverApp
+  rectangle "Admin Portal" as AdminPortal
+}
+
+Customer --> CustApp : browse/order/track
+Restaurant --> RestPortal : manage menu & orders
+Driver --> DriverApp : accept deliveries
+Admin --> AdminPortal : monitor & support
+
+CustApp --> "Fork & Knife Platform" : REST / WebSocket
+RestPortal --> "Fork & Knife Platform" : REST
+DriverApp --> "Fork & Knife Platform" : REST / WebSocket
+AdminPortal --> "Fork & Knife Platform" : REST
+@enduml

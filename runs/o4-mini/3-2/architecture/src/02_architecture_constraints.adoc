@@ -1,0 +1,25 @@
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+The following constraints affect the design and implementation of InsureSphere CRM. They originate from existing infrastructure, regulatory requirements, organizational conventions, and non-negotiable guidelines.
+
+=== Technical Constraints
+[options="header",cols="1,2,2"]
+|===
+|Constraint|Description|Implication
+|Use of Enterprise Service Bus|All synchronous and asynchronous legacy integration must go through the corporate ESB/integration platform|Design adapters for ESB; no direct system calls
+|Authentication & Authorization|Must use corporate OAuth2/OIDC Identity Provider (Keycloak)|Integrate with IDP for token issuance and RBAC; no custom auth services
+|Container Orchestration|Deploy on Kubernetes clusters managed by IT Operations|Design stateless microservices; adhere to container best practices
+|Monitoring Stack|Use Prometheus for metrics, ELK for logs, Jaeger for tracing|Emit standardized metrics/logs/traces; integrate with the monitoring platform
+|UI Framework|Choose either React or Angular (per corporate UI guidelines)|Adhere to component-based architecture; follow style guidelines
+|===
+
+=== Organizational Constraints
+[options="header",cols="1,2"]
+|===
+|Constraint|Description
+|Compliance Standards|Solution must comply with GDPR and BaFin regulations
+|Active–Active Deployment|Architecture must support high availability with active–active across two data centers
+|Release Process|All deployments follow blue-green or canary strategies via CI/CD pipelines
+|Data Warehouse Access|Teradata access via CDC streams; no direct user queries
+|===

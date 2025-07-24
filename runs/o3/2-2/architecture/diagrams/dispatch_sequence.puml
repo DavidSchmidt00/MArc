@@ -1,0 +1,22 @@
+@startuml
+actor Customer
+participant "Ordering Service" as Ordering
+participant "Kafka\norder.lifecycle" as KafkaOrder
+participant "Matching Engine" as Match
+participant "Job Offer Manager" as Offer
+participant "Real-Time Gateway" as RTGW
+actor "Driver App" as Driver
+participant "Acceptance Processor" as Accept
+participant "Kafka\ndispatch.assignment" as KafkaAssign
+Customer -> Ordering : Place order
+Ordering -> KafkaOrder : OrderCreated
+KafkaOrder -> Match : event
+Match -> Offer : MatchProposed(drivers)
+Offer -> RTGW : JobOffer(driver1)
+RTGW -> Driver : Push offer
+Driver -> RTGW : Accept
+RTGW -> Accept : DriverJobResponse
+Accept -> KafkaAssign : OrderAssigned
+Accept -> Ordering : gRPC updateStatus(ASSIGNED)
+Ordering -> Customer : Status update via RTGW
+@enduml

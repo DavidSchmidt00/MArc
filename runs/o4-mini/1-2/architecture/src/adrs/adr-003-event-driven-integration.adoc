@@ -1,0 +1,26 @@
+= ADR-003: Event-Driven Integration for Asynchronous Tasks
+
+== Context
+
+Booking confirmation and reminder notifications, as well as report generation, should not impede the responsiveness of booking operations. Key considerations:
+
+* Synchronous notification calls during booking may increase response times and risk timeouts.
+* Reports require aggregation over potentially large datasets.
+
+== Decision
+
+We will use an event-driven approach: booking domain events (BookingCreated, BookingChanged) are published to a Redis-backed job queue. Worker processes subscribe to the queue and handle notifications and report precomputations asynchronously.
+
+== Consequences
+
+Positive:
+* Booking flow remains fast as tasks are offloaded.
+* Improved system resilience; failures in notification/reporting do not affect booking.
+* Extensible for future modules (e.g., payment processing) via event subscriptions.
+
+Negative:
+* Complexity of eventual consistency; notifications/reporting may lag behind real-time.
+* Requires operational oversight of queue health and worker metrics.
+
+Neutral:
+* Additional infrastructure (Redis, worker nodes) to manage.

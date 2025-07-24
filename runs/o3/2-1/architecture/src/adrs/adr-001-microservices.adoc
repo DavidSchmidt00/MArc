@@ -1,0 +1,19 @@
+= ADR-001 Microservice Architecture with Bounded Contexts
+
+Date: 2024-03-15
+
+== Status
+Accepted
+
+== Context
+The platform must support independent delivery by three product squads, horizontal scalability to handle significant traffic spikes, and isolation of PCI scope. Monolithic or modular monolith approaches risk deployment coupling and scaling bottlenecks. Service-per-domain boundaries align with Domain-Driven Design and organisational team structure.
+
+== Decision
+We will implement the "Fork & Knife" platform as a set of independently deployable microservices. Each bounded context (Customer, Restaurant, Logistics, plus cross-cutting Platform) owns its codebase and database schema. Inter-service communication is via REST/gRPC (queries/commands) and Kafka (events).
+
+== Consequences
+* ✅ Autonomous scaling and deployment for each context.
+* ✅ Teams can release features independently, supporting weekly cadence.
+* ✅ Fault isolation limits blast radius.
+* ⚠️ Higher operational complexity (service discovery, monitoring, distributed tracing).
+* ⚠️ Requires DevOps maturity and automated CI/CD pipelines.

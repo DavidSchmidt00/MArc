@@ -1,0 +1,10 @@
+= 2. Architecture Constraints
+
+* Monolithic backend using a unified codebase (Node.js/Express or Python/Django).
+* Frontend as a Single-Page Application (React or Vue.js).
+* Data persistence in PostgreSQL, with Redis for caching and job queuing.
+* No payment processing in initial release; must be extensible for future addition.
+* Deployable as Docker containers (Kubernetes or VM-based).
+* All client-server communication over TLS (>=1.2).
+* Personal data must be encrypted at rest.
+* Use of third-party SMS/email gateway (Twilio, SendGrid).

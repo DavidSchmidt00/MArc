@@ -1,0 +1,45 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+The purpose of this document is to describe the architecture of the **“Fork & Knife” Delivery Platform**.  It addresses the driving functional requirements, the most important quality goals, and the stakeholders who influence or are affected by the architecture.
+
+=== Requirements Overview
+
+*Functional Scope*
+
+|===
+|ID | Requirement (summary)
+|CUS-BROWSE | Customers can discover restaurants via search & filtering.
+|CUS-ORDER  | Customers can compose a cart, pay securely, and place an order.
+|CUS-TRACK  | Customers can track order & driver location in real time.
+|RES-MANAGE | Restaurants manage menus, pricing, availability, and accept/decline orders.
+|DRV-DISPATCH| Drivers set availability, receive delivery offers, navigate, and complete deliveries.
+|ADM-OPS    | Platform administrators monitor operations, support users, and manage fees & payouts.
+|===
+
+The complete list of user stories is maintained in `projects/project-2.md`.  The above table captures the architecturally significant capabilities that drive the design.
+
+=== Quality Goals (Top-5)
+
+|===
+|Priority|Quality Goal|Scenario / Acceptance Criterion
+|1|Scalability|System sustains 5× normal lunch-rush load (>100 k concurrent sessions, 10 k active orders) without SLO violation.
+|2|Real-time Responsiveness|Order state changes and driver GPS updates propagate to all interested parties within ≤2 s 95 % of the time.
+|3|High Availability|≥99.95 % monthly uptime for core ordering functions; no single point of failure.
+|4|Security & Compliance|All payments PCI-DSS-compliant; personal data GDPR/CCPA compliant with export/erasure workflows.
+|5|Maintainability & Team Autonomy|Three product squads release independently at least weekly; service boundaries minimise cross-team coordination.
+|===
+
+=== Stakeholders
+
+|===
+|Role|Contact / Representation|Expectations
+|Customers|End-users of web & mobile apps|Fast, reliable ordering and delivery experience.
+|Restaurant Owners / Managers|On-boarded restaurants|Low commissions, real-time order notifications, clear reporting.
+|Delivery Drivers|Contract drivers|Fair, timely job assignments; transparent earnings.
+|Platform Administrators|Operations & support staff|Operational dashboards, incident tooling, fee configuration.
+|Compliance & Finance|Legal / accounting team|Audit trails, accurate payouts, regulatory compliance.
+|Development Squads|Customer, Restaurant, Logistics teams|Clear service ownership, independent deployability.
+|Infrastructure / SRE|Site-Reliability Engineers|Observable, resilient, cost-efficient platform.
+|Security|Security engineers|End-to-end encryption, least-privilege access, auditability.
+|===

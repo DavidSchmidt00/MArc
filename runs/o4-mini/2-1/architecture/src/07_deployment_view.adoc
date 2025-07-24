@@ -1,0 +1,23 @@
+[[section-deployment-view]]
+== Deployment View
+
+The system is deployed to a cloud environment (AWS/GCP/Azure) using Kubernetes for container orchestration. Each microservice is packaged as a Docker container and deployed as pods across multiple availability zones for resilience.
+
+image::diagrams/forkknife_deployment.svg[Deployment Diagram]
+
+Nodes:
+* Load Balancer: Distributes incoming requests across the API Gateway replicas.
+* Kubernetes Cluster: Hosts all service pods with Horizontal Pod Autoscaling.
+* PostgreSQL Cluster: Managed, multi-AZ primary database for strong consistency.
+* MongoDB Cluster: Managed, sharded document store for flexible data.
+* Kafka Cluster: Self-managed or managed streaming platform for events.
+* Redis Cluster: Caching and session store for low-latency access.
+* S3 Bucket: Stores static assets and large binary objects.
+
+Networking:
+* All service communication secured via mTLS.
+* VPC and subnet isolation for database and messaging clusters.
+
+Scalability & Resilience:
+* Kubernetes Horizontal Pod Autoscaler for dynamic scaling based on CPU, memory, and custom metrics (e.g., Kafka lag).
+* Multi-AZ deployment for pods and data clusters to meet SLA (≥99.9% uptime).

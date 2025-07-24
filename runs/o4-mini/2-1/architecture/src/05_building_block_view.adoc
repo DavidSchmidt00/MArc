@@ -1,0 +1,37 @@
+[[section-building-block-view]]
+== Building Block View
+
+=== Level 1: Whitebox Overall System
+
+The overall system is decomposed into independent microservices, supporting clear service boundaries, independent deployability, and scalability. All external clients interact through the API Gateway, which handles cross-cutting concerns. Services communicate synchronously via REST/gRPC and asynchronously via an event bus. Persistent stores and caches support each service's data needs.
+
+image::diagrams/forkknife_context.svg[Overview Diagram, width=100%]
+
+Motivation::
+By decomposing into focused, independently deployable services and an event-driven backbone, we achieve loose coupling, scalability, and resilience. The clear separation of concerns aligns with organizational team boundaries.
+
+Contained Building Blocks::
+[options="header",cols="1,2"]
+|===
+|Name|Responsibility
+|API Gateway|Central entry point for all client requests. Handles routing, auth, rate limiting, TLS termination.
+|Auth & Identity Service|Manages user authentication, token issuance (OAuth2/JWT), and role-based access control.
+|Customer Service|Manages customer profiles, favorites, order history, and reviews. Caches hot data for performance.
+|Restaurant Service|Manages restaurant profiles, menus, availability, and financial reports. Publishes menu events.
+|Order Service|Orchestrates order lifecycle, state transitions, and saga-based workflows. Ensures strong consistency of orders.
+|Driver Service|Manages driver profiles, status, availability, and geolocation tracking. Calculates routing via Mapping Service.
+|Payment Service|Handles payment intents, authorizations, and captures. Integrates with external payment provider with idempotency.
+|Notification Service|Subscribes to domain events and delivers notifications via push, WebSocket, and in-app messages.
+|Mapping & Routing Service|Wraps external mapping APIs for geocoding, routing, and ETA calculations.
+|Event Bus (Kafka)|Provides asynchronous, high-throughput event distribution between services.
+|PostgreSQL|Primary datastore for strongly consistent data (orders, payments).
+|MongoDB|Primary datastore for document-oriented data (customers, restaurants, drivers).
+|Redis Cache|In-memory cache and session store for low-latency data access and geo-queries.
+|Object Storage (S3)|Stores static assets (menu images, receipts) and large volumes of unstructured data.
+|===
+
+Important Interfaces::
+* API Gateway → Services: REST/HTTP+JSON or gRPC
+* Services ↔ Event Bus: Kafka topics for domain events (OrderCreated, MenuUpdated, DriverLocation)
+* Order Service ↔ Payment Service: synchronous API call for payment intents
+* Driver Service ↔ Mapping Service: REST calls to external Maps API

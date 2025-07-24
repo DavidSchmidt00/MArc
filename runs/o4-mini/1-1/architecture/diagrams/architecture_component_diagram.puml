@@ -1,0 +1,24 @@
+@startuml
+skinparam componentStyle rectangle
+
+component "SPA Client" as SPA
+component "API Layer" as API
+component "Booking Engine" as BE
+component "Notification Manager" as NM
+component "Reporting Service" as RS
+component "Repositories" as DA
+
+database "PostgreSQL DB" as DB
+queue "Redis (Cache & Queue)" as REDIS
+component "Email/SMS Providers" as EXT
+
+SPA --> API : HTTPS/JSON
+API --> BE : booking, availability, profiles, reports
+BE --> DA : read/write
+DA --> DB : SQL queries
+BE --> REDIS : cache availability
+BE --> REDIS : enqueue jobs
+NM --> REDIS : dequeue jobs
+NM --> EXT : send notifications
+RS --> DA : data aggregation
+@enduml

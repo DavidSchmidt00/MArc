@@ -1,0 +1,34 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+InsureSphere CRM is a modern, front-office Customer Relationship Management system tailored for a large insurance company. Its primary objective is to provide a 360° view of customers—combining personal details, policies, claims history, interactions, and marketing segments—through a single, unified interface. The CRM replaces multiple legacy applications and integrates with mainframe policy systems, Java-based claims systems, AS/400 billing, and a Teradata data warehouse.
+
+=== Requirements Overview
+*Unified Customer View*: Search by name, policy number, phone, and display consolidated dashboards with personal data, active policies, claims, interactions, and journey timelines.
+*Automated Workflows & Alerts*: Trigger renewal reminders, missed payments, birthdays; support FNOL initiation and task generation.
+*Quote Generation*: Pre-fill data for new quotes based on existing customer records.
+*Interaction Logging*: Log calls, emails, chats with templates for consistent responses.
+*Underwriting & Marketing*: Generate at-a-glance risk reports, calculate risk scores, create dynamic segments, and export to external marketing platforms. Reflect campaign results back into CRM.
+*Data Migration & Cleansing*: Automated ETL to cleanse and dedupe legacy data into the new schema.
+
+=== Quality Goals
+[options="header",cols="1,3,2"]
+|===
+|Priority|Quality Goal|Scenario / Metric
+|1|Integration & Interoperability|95% of synchronous calls to legacy systems complete within 1s; retry and DLQ on failure
+|2|Data Consistency & Integrity|Address updates propagate to all systems within 5min (99th percentile)
+|3|Security & Compliance|TLS 1.2+, AES-256 at rest, audit logs for 100% of PII CRUD operations
+|4|Reliability & Availability|Active–active deployment, 99.9% uptime, RTO ≤ 4h
+|5|Usability|Dashboard page loads ≤2s under 2,000 concurrent users (95th percentile)
+|===
+
+=== Stakeholders
+[options="header",cols="1,2,2"]
+|===
+|Role|Name / Team|Expectations
+|Insurance Agent|Sales & Renewals|Unified view, quick search, timeline, alerts, quote generation
+|Customer Support Rep|Support Desk|Easy interaction logging, templates, FNOL initiation
+|Underwriter|Risk Department|At-a-glance risk reports, system-generated scores
+|Marketing Manager|Marketing Dept.|Dynamic segments, export/import campaigns, ROI tracking
+|IT Operations & Compliance|IT Ops & Security|Seamless integration, high availability, auditability, regulatory compliance
+|===

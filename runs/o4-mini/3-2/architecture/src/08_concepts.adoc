@@ -1,0 +1,36 @@
+[[section-concepts]]
+== Concepts
+
+This section defines key architectural and domain concepts employed in the InsureSphere CRM solution.
+
+=== Microservices & Hexagonal Architecture
+*Bounded Contexts*: Each domain area (Customer, Policy, Claims, Interaction, Marketing, Risk) is isolated in its own service.  
+*Hexagonal Pattern*: Services expose inbound ports (REST, events) and interact with infrastructure via outbound adapters. Business logic remains independent of frameworks.
+
+=== API Gateway
+A central gateway provides a unified API surface, handles authentication (OAuth2/OIDC), authorization (RBAC), routing to microservices, rate-limiting, and request logging.
+
+=== Event-Driven Architecture (Kafka)
+Domain events are published to Kafka topics for asynchronous, decoupled integration and near-real-time data consistency.  
+Services and ESB connectors subscribe to relevant topics.
+
+=== Enterprise Service Bus (ESB)
+A corporate ESB handles synchronous (MQ, SOAP/REST) and asynchronous (batch, CDC) communication with legacy systems.  
+The ESB provides protocol translation, orchestration, retry logic, and dead-letter queues.
+
+=== Anti-Corruption Layer (ACL)
+An ACL between ESB adapters and CRM microservices transforms and validates legacy data models into the CRM’s canonical domain model, shielding microservices from legacy inconsistencies.
+
+=== Change Data Capture (CDC)
+Legacy databases emit change events via CDC connectors.  
+Events are streamed to Kafka to synchronize microservice data stores and support the CRM’s near-real-time consistency SLA.
+
+=== CQRS (Command Query Responsibility Segregation)
+Optionally applied for high-load read scenarios (timelines, segment queries) by separating read stores from write models.
+
+=== Containerization & Kubernetes
+All components (services, connectors, ACL, ETL jobs) are packaged as Docker containers and orchestrated by Kubernetes in an active–active, multi-datacenter setup.
+
+=== Security & Compliance
+Authentication and authorization use OAuth2/OIDC and RBAC.  
+All data in transit is encrypted (TLS), data at rest is encrypted (AES-256), and all PII operations are audit-logged to meet GDPR and BaFin requirements.

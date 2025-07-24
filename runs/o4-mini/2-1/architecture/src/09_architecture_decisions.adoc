@@ -1,0 +1,7 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+The following Architecture Decision Records (ADRs) document key architectural choices for the Fork & Knife platform:
+
+* xref:adrs/adr-001-microservices-decomposition.adoc[ADR-001: Microservices Decomposition]
+* xref:adrs/adr-002-event-driven-communication.adoc[ADR-002: Event-Driven Communication with Kafka]

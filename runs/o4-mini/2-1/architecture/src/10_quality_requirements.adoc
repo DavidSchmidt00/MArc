@@ -1,0 +1,31 @@
+[[section-quality-scenarios]]
+== Quality Requirements
+
+=== Quality Tree
+
+Quality
+* Performance
+** Real-time updates <2s (High)
+** Order placement latency <500ms under normal load (Medium)
+* Scalability
+** Support 10k concurrent users and 500 orders/min (High)
+* Availability
+** ≥99.9% uptime (High)
+* Security
+** TLS, OAuth2/JWT, PCI DSS for payments (High)
+* Maintainability
+** Independent deployments, clear service boundaries (Medium)
+* Observability
+** End-to-end tracing, centralized logging, real-time alerts (Medium)
+
+=== Quality Scenarios
+[options="header",cols="1,1,1,1,1"]
+|===
+|ID|Scenario|Stimulus|Response|Priority
+|QS-01|Order Processing Performance|Customer submits order|OrderService responds within 500ms, order created|High
+|QS-02|Real-Time Tracking|Driver sends location update|Customer and restaurant receive update <2s|High
+|QS-03|Scale-Out Under Load|Traffic spikes to 500 orders/min|Autoscaler spins up additional pods within 2min|High
+|QS-04|Resilience to Service Failure|Order Service pod fails|Other pods handle requests; failed pod restarted|High
+|QS-05|Secure Communication|Client request to API|TLS handshake and JWT validation complete|High
+|QS-06|Analytics Reporting|End-of-day summary report|Generate within 5min via event store|Medium
+|===

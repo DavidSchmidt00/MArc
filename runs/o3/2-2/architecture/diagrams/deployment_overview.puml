@@ -1,0 +1,37 @@
+@startuml
+deploy "Kubernetes Cluster (primary region)" as k8s {
+  node "Edge Namespace" {
+    component "API Gateway (Nginx/Envoy)" as apigw
+    component "Real-Time Gateway" as rtgw
+  }
+  node "BFF Namespace" {
+    component "BFF-Customer" as bffc
+    component "BFF-Restaurant" as bffr
+    component "BFF-Driver" as bffd
+  }
+  node "Core Namespace" {
+    component "Ordering Service" as ordering
+    component "Menu Service" as menu
+    component "Dispatch Service" as dispatch
+    component "Payment Service" as payment
+    component "Notification Service" as notif
+  }
+}
+
+deploy "Stateful Services (managed)" {
+  database "Postgres Cluster" as pg
+  database "MongoDB Cluster" as mongo
+  database "Redis-Geo Cluster" as redis
+  database "Kafka Cluster" as kafka
+}
+
+rtgw --> kafka : produce/consume events
+ordering --> pg
+menu --> mongo
+dispatch --> redis
+dispatch --> kafka
+payment --> pg
+payment --> kafka
+notif --> kafka
+
+@enduml

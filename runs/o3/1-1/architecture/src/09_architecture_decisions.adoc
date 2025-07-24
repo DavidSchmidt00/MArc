@@ -1,0 +1,8 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+The system’s significant architectural decisions are documented as Architecture Decision Records (ADRs) in the `architectures/src/adrs` folder.
+
+* xref:adrs/adr-001-layered-modular-monolith.adoc[ADR-001: Choose Layered Modular-Monolith]
+* xref:adrs/adr-002-postgres-exclude-constraint.adoc[ADR-002: Prevent Double-Booking with PostgreSQL EXCLUDE]
+* xref:adrs/adr-003-reminder-scheduler-pattern.adoc[ADR-003: Reliable 24-h Reminder Scheduling via EventBridge + SQS]

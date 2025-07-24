@@ -1,0 +1,12 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+* xref:adrs/adr-001-architectural-style.adoc[ADR-001: Architectural Style & Guiding Patterns]
+* xref:adrs/adr-002-integration-platform.adoc[ADR-002: Integration Platform & ACL]
+* xref:adrs/adr-003-communication-paradigm.adoc[ADR-003: Communication Paradigm]
+* xref:adrs/adr-004-exactly-once-outbox.adoc[ADR-004: Exactly-Once Outbox]
+* xref:adrs/adr-005-cqrs-event-sourcing.adoc[ADR-005: CQRS + Event Sourcing]
+* xref:adrs/adr-006-saga-orchestration.adoc[ADR-006: Saga Orchestration]
+* xref:adrs/adr-007-data-residency.adoc[ADR-007: Data Residency & Tokenisation]
+* xref:adrs/adr-008-observability.adoc[ADR-008: Observability & SLA Monitoring]
+* xref:adrs/adr-009-disaster-recovery.adoc[ADR-009: Disaster Recovery]

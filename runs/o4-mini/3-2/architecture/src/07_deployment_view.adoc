@@ -1,0 +1,30 @@
+[[section-deployment-view]]
+== Deployment View
+
+This view shows the physical deployment of components across infrastructure nodes and datacenters.
+
+image::../diagrams/deployment-view.svg[Deployment View]
+
+=== Nodes & Containers
+* Browser Clients: Agents, Support, Underwriters, Marketing access via HTTPS
+* API Gateway Pod (Kubernetes): Handles client requests
+* Microservice Pods (Kubernetes): Customer, Policy, Claims, Interaction, Marketing, Risk
+* ESB Connector Pods (Kubernetes): Legacy integration adapters
+* ACL Pod (Kubernetes): Anti-corruption layer for legacy mapping
+* Kafka Cluster (Kubernetes): Event streaming platform
+* Databases (Managed Services): Separate DB for each microservice
+* ETL Job Pods (Kubernetes CronJobs): Data migration tasks
+* Identity Provider (Keycloak, VM or container): OAuth2/OIDC service
+* Monitoring Stack (Prometheus, ELK, Jaeger, on dedicated nodes)
+* External Systems:
+  - Mainframe Policy System
+  - Java Claims System
+  - AS/400 Billing System
+  - Teradata Data Warehouse
+  - Marketing Cloud
+
+=== High Availability & Disaster Recovery
+* Kubernetes Cluster spanning two data centers, active–active
+* StatefulSets for Kafka with cross-DC replication
+* Multi-AZ database instances with automated failover
+* CI/CD pipelines deploy changes with blue-green or canary strategies

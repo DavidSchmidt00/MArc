@@ -1,0 +1,21 @@
+= ADR-001 Adopt Hexagonal Modular Monolith
+:toc:
+
+== Status
+Accepted – 2024-06-26
+
+== Context
+Prime-Cuts Booking must stay inexpensive to host and simple to operate by a very small team, but it also needs clear module boundaries so that new capabilities (e.g. payments) can be added later.  A micro-service architecture would introduce operational overhead and cost that are not justified at current scale (single shop, moderate traffic). A traditional layered monolith risks tight coupling that hampers future evolution.
+
+== Decision
+We will implement the back-end as a *modular monolith* following the *Hexagonal (Ports & Adapters) pattern*.
+
+* One deployable Node.js application contains multiple well-separated modules (Booking, Schedule, etc.).
+* The domain core is technology-agnostic; adapters provide persistence, messaging, HTTP.
+* Domain events are published on an internal message bus (RabbitMQ) so that new external services can subscribe later.
+
+== Consequences
++ Single deployment, single database → low hosting cost and ops effort.
++ Consistent in-process transactions across modules.
++ Clear boundaries enable extraction of individual modules into micro-services in the future without large refactor.
+− A large codebase in one repo/process requires discipline to keep boundaries intact (enforced via ESLint import rules & code reviews).

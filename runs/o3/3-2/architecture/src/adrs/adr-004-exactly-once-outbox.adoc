@@ -1,0 +1,12 @@
+= ADR-004 Exactly-Once Event Publishing – Transactional Outbox
+
+== Context
+Duplicate events can lead to inconsistent customer data across CRM and legacy systems.  We need exactly-once semantics despite distributed components and batch integrations.
+
+== Decision
+Every microservice persists domain events into a local *Outbox* table within the same transaction as state changes.  Debezium streams these rows to Kafka.  Commands carry a global *Idempotency-Key* header checked by consumers; processed keys are stored in a compacted topic.
+
+== Consequences
+* ✅  Atomic state + event write → no lost updates.
+* ✅  Duplicate suppression across retries and network glitches.
+* ⚠  Additional storage and operational cost for Debezium connectors.

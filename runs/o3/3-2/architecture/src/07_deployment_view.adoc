@@ -1,0 +1,61 @@
+[[section-deployment-view]]
+
+== Deployment View
+
+This section documents how the InsureSphere CRM software artifacts are deployed onto the underlying technical infrastructure across environments (production and disaster-recovery). It covers the distribution of containers, databases, messaging infrastructure, and integration runtimes, as well as their physical locations and communication channels.
+
+=== Infrastructure Level 1 – Production & DR Topology
+
+.Deployment Overview
+[plantuml, deployment-overview, svg]
+....
+include::../diagrams/deployment-overview.puml[]
+....
+
+Motivation::
+
+The CRM is mission-critical and must achieve 99.9 % availability with an RTO ≤ 4 h and RPO ≤ 15 min. Therefore, it is deployed in an active-passive multi-region setup within EU data-centres (Azure West Europe primary, Azure North Europe DR). All stateful components replicate asynchronously to the DR region. Stateless workloads can be redeployed from Git (ArgoCD) during a fail-over.
+
+Quality & Performance Features::
+
+* High Availability: Multi-AZ Kubernetes cluster; database geo-replication; Kafka MirrorMaker 2 multi-region cluster.
+* Scalability: AKS with HPA; Kafka partitioning; database vertical/ horizontal scaling.
+* Security & Compliance: All resources remain in EU; encryption in transit (TLS 1.3) and at rest; firewall rules restrict cross-region exposure.
+* Observability: Prometheus federation aggregates metrics from both regions; Alertmanager routes region-specific alerts.
+
+Mapping of Building Blocks to Infrastructure::
+
+|===
+| Building Block | Deployment Target (Primary) | Deployment Target (DR)
+| Domain Microservices | AKS Cluster (West EU) | AKS Cluster (North EU)
+| API Gateway (Kong) | AKS Cluster (West EU) | AKS Cluster (North EU)
+| PostgreSQL | Flexible Server (West EU) | Geo-Replica (North EU)
+| Kafka | Confluent Cloud / Self-Host Brokers (West EU) | Mirror Brokers (North EU)
+| Camunda 8 | SaaS (dual-region EU) | SaaS (same)
+| MuleSoft RTF (Adapters) | VM Scale Set (West EU) | Stand-by VMSS (North EU)
+| Audit Blob Storage | Azure Storage (West EU) | Geo-replicated Blob (North EU)
+|===
+
+=== Infrastructure Level 2 – AKS Cluster (Primary)
+
+:leveloffset: +1
+==== Kubernetes Namespace Layout
+[cols="1,2"]
+|===
+| Namespace | Purpose / Workloads
+| gateway | API Gateway pods, horizontal pod autoscaler (HPA)
+| crm | Domain microservices, Redis instances
+| integration | Kafka Connect (Debezium), schema registry sidecars
+| observability | Prometheus, Grafana, Loki, Jaeger agents
+| shared | Vault Agent Injector, NGINX Ingress Controller
+|===
+
+==== Network Policies & Ingress
+* Calico network policies restrict egress from crm namespace to only Kafka, PostgreSQL, and internal services.
+* Azure Application Gateway provides WAF-enabled public ingress → NGINX ingress for path routing.
+
+==== Storage Classes
+* Premium SSD (PostgreSQL), Ultra Disk for Kafka ZooKeeper, Azure Files for read-only config maps.
+:leveloffset: -1
+
+(Additional environment diagrams—e.g. test, performance test—would follow the same template and be included here on demand.)

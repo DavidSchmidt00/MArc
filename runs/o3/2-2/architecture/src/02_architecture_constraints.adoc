@@ -1,0 +1,10 @@
+= 2. Architecture Constraints
+
+* Microservice + event-driven style mandated by CTO.
+* Each service owns its own datastore (polyglot persistence).
+* Kafka (or compatible) must be used as the asynchronous event bus.
+* Cloud-native deployment on Kubernetes, no vendor lock-in to a single cloud.
+* API Gateway is single ingress; OAuth 2.0/OIDC for authentication.
+* PCI-scope must be isolated in a dedicated network segment.
+* Disaster-recovery objectives: RPO ≤ 5 min, RTO ≤ 30 min.
+* GDPR compliance including data-erasure workflow across all services.

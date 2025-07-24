@@ -1,0 +1,12 @@
+= 1. Introduction and Goals
+
+This document describes the architecture for the Prime-Cuts Booking system, a web-based appointment booking application for a local barbershop. The architecture is designed to modernize operations, improve customer experience, and reduce administrative workload by providing an intuitive SPA for customers and staff, backed by a robust monolithic backend.
+
+Goals:
+* Provide a responsive, mobile-first user interface for booking, managing, and administrating appointments.
+* Ensure high reliability and availability (target 99.5% uptime).
+* Prevent double bookings through transactional scheduling.
+* Enable configurable working hours, blocked slots, and comprehensive schedule management.
+* Deliver timely email and SMS notifications for confirmations and reminders.
+* Support efficient reporting and analytics on booking data.
+* Lay a foundation for future extensibility (e.g., payment integration).

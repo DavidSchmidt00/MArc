@@ -1,0 +1,38 @@
+@startuml
+actor Agent
+participant SPA
+participant API
+participant BFF
+participant CC as CustomerService
+participant Saga as Camunda
+participant ESB
+participant Billing
+participant Mainframe
+
+== Initiate ==
+Agent -> SPA : Update Address form
+SPA -> API : PUT /customers/{id}/address
+API -> BFF : Forward
+BFF -> CustomerService : cmd AddressChangeRequested
+CustomerService -> CustomerService : validate & persist (write side)
+CustomerService -> CustomerService : write Outbox row
+activate CustomerService
+CustomerService --> BFF : 202 Accepted
+BFF --> API : 202
+API --> SPA : 202 (task queued)
+SPA -> Agent : Confirmation
+
+== Saga Orchestration ==
+CustomerService -> Camunda : Event AddressChangeRequested
+Camunda -> ESB : cmd UpdateBillingAddress
+ESB -> Billing : batch-queue JSON
+Billing --> ESB : ACK queued
+ESB --> Camunda : evt BillingUpdateQueued
+Camunda -> ESB : cmd UpdatePolicyAddress
+ESB -> Mainframe : IBM MQ message (EBCDIC)
+Mainframe --> ESB: ACK
+ESB --> Camunda : evt PolicyAddressUpdated
+Camunda -> CustomerService : evt AddressChangeCompleted
+CustomerService -> CustomerService : commit event + close Saga
+Camunda -> TaskService : evt TaskComplete(id)
+@enduml

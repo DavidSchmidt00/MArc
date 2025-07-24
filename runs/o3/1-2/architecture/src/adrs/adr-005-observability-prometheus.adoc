@@ -1,0 +1,18 @@
+= ADR-005 Observability with Prometheus & Structured Logs
+:toc:
+
+== Status
+Accepted – 2024-06-26
+
+== Context
+ASRs specify ≥99.5 % uptime and rapid diagnosis. Need metrics, logs and alerts across web app and workers.
+
+== Decision
+*Expose Prometheus metrics* from each service at `/metrics` via prom-client library.  Key metrics include HTTP latency, queue depth, booking conflicts, notification success/failure.
+*Structured JSON logging* using pino; logs shipped to Papertrail/Splunk.
+*Alerting* via Grafana Cloud or Hosted Prometheus Alerts; thresholds configured for uptime, error ratios, queue depth.
+
+== Consequences
++ Unified metrics/alerting stack simplifies ops.
++ JSON logs parseable and correlated via `request_id`.
+− Slight memory/CPU overhead for metrics collection (negligible).

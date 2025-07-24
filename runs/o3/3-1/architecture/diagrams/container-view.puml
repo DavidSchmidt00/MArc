@@ -1,0 +1,24 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #E0E0F8
+  BorderColor Black
+}
+skinparam shadowing false
+rectangle "React SPA\n(Agent UI)" as UI
+rectangle "Agent BFF\n(GraphQL)" as BFF
+rectangle "Customer Service\n(Spring Boot)" as Customer
+rectangle "Interaction Service" as Interaction
+rectangle "Quote/Policy Service" as Policy
+rectangle "Kafka Cluster" as Kafka
+rectangle "Integration Hub\n(Camel-K)" as Hub
+cloud "Legacy Systems" as Legacy
+UI --> BFF : HTTPS
+BFF --> Customer : REST/GraphQL
+BFF --> Interaction : REST
+BFF --> Policy : REST
+Customer --> Kafka : publish events
+Interaction --> Kafka
+Policy --> Kafka
+Kafka --> Hub : consume
+Hub --> Legacy : MQ/SOAP/Flat-File
+@enduml

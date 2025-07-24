@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "team": "./team.py:team"
+  },
+  "env": "../APIKEY.env",
+  "image_distro": "wolfi"
+}

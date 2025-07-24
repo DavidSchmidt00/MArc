@@ -1,0 +1,29 @@
+[[section-introduction-and-goals]]
+== 1. Introduction and Goals
+
+=== 1.1 Purpose of this Document
+This arc42 document captures the architecture of the **“InsureSphere CRM”** integration project for the insurance company.  It serves as the single point of truth regarding the major architectural building blocks, their interactions, and the rationale behind key technical decisions.  The intended audience are developers, architects, operations, security & compliance officers, and other stakeholders.
+
+=== 1.2 Requirements Overview
+The project replaces several siloed front-office applications with a modern CRM that provides a 360-degree customer view.  It must integrate tightly with four heterogeneous legacy systems (Policy Mainframe, Claims, Billing, Data-Warehouse) and an external marketing platform.  The most important quality attributes are Integration & Interoperability, Data Consistency, Security & Compliance, Reliability, and Usability.  A complete list of Architecturally Significant Requirements (ASRs) is captured in section 10.
+
+=== 1.3 Quality Goals
+|===
+| Priority | Quality Goal | Motivation
+| 1 | Seamless Integration | The CRM is worthless without near-real-time, reliable integration with core legacy systems.
+| 2 | Data Consistency & Integrity | Customer master-data changes must propagate within 5 minutes and exactly once.
+| 3 | Security & Compliance | Must meet GDPR & BaFin, field-level RBAC, 10-year audit trail.
+| 4 | Reliability & Availability | 99.9 % uptime with graceful degradation when a legacy backend is unavailable.
+| 5 | Usability & Accessibility | 3-second screen load, ≤3 clicks for key journeys, WCAG 2.1 AA.
+|===
+
+=== 1.4 Stakeholders
+|===
+| Role | Contact / Interest
+| Insurance Agents | Unified customer dashboard, task queue, quote generation
+| Customer Support | Logging interactions, FNOL initiation
+| Underwriters | Risk assessment report, risk score
+| Marketing Department | Segment creation, campaign ROI feedback
+| IT Operations | Operate CRM & integration platform, meet SLAs
+| Compliance & Security | Ensure GDPR/BaFin compliance, auditability
+|===

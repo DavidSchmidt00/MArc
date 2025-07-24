@@ -1,0 +1,19 @@
+= ADR-006 Active/Passive DR with MirrorMaker2 & Logical Replication
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+Reliability & Availability (ASR #4) require 99.9 % uptime, RPO 5 min, RTO 15 min even if the primary OpenShift region fails.
+
+== Decision
+Use an **active/passive** disaster recovery model:
+
+* Secondary OpenShift cluster in Region B.
+* PostgreSQL logical replication (async, commit_lag ≤ 3 s).
+* Apache Kafka MirrorMaker2 replicates topics from region A → B; lag alert at 30 s.
+* ArgoCD maintains GitOps sync; disaster fail-over automated via runbook.
+
+== Consequences
+* Meets RPO/RTO targets with manageable cost.
+* Potential message loss window equal to MirrorMaker lag (<30 s) but within RPO.
+* Requires periodic fail-over drills to maintain readiness.

@@ -1,0 +1,27 @@
+@startuml
+component SPA
+
+package "Monolith" {
+[Auth]
+[UserProfile]
+[ServiceStaff]
+[AvailabilityBooking]
+[Notification]
+[Reporting]
+}
+
+database PostgreSQL
+queue RedisQueue
+component RedisCache
+
+SPA --> AvailabilityBooking : GET /availability
+SPA --> Auth : login
+
+AvailabilityBooking --> RedisCache : getAvailability()
+AvailabilityBooking --> PostgreSQL : SELECT slots / write booking
+AvailabilityBooking --> RedisQueue : enqueue BookingCreated
+
+RedisQueue --> Notification : consume BookingCreated
+Notification --> SendGrid : send email
+Notification --> Twilio : send SMS
+@enduml

@@ -1,0 +1,74 @@
+= 3. System Scope and Context
+
+== 3.1 Business Context
+
+[plantuml, context, svg]
+----
+@startuml
+actor Customer
+actor "Restaurant Manager" as RM
+actor "Delivery Driver" as Driver
+actor Admin
+
+rectangle "Fork & Knife Platform" {
+  component "Customer Apps" as CustApp
+  component "Restaurant Portal" as RestApp
+  component "Driver App" as DriverApp
+}
+
+Customer --> CustApp : Browse & order
+RM --> RestApp : Manage menus & orders
+Driver --> DriverApp : Accept jobs
+Admin --> "Admin Console" : Support & Ops
+
+CustApp --> "Fork & Knife Platform"
+RestApp --> "Fork & Knife Platform"
+DriverApp --> "Fork & Knife Platform"
+Admin --> "Fork & Knife Platform"
+@enduml
+----
+
+== 3.2 Technical Context
+
+[plantuml, technical_context, svg]
+----
+@startuml
+skinparam componentStyle rectangle
+
+package "Clients" {
+  [Web / iOS / Android] as Clients
+  [Restaurant Tablet PWA] as Tablet
+  [Driver Mobile App] as DriverApp
+}
+
+package "Fork & Knife Cloud" {
+  [API Gateway]
+  [Real-Time Gateway]
+  [BFFs]
+  [Core Microservices]
+  [Kafka Event Bus]
+  [Datastores]
+}
+
+Clients --> [API Gateway]
+Tablet --> [API Gateway]
+DriverApp --> [API Gateway]
+Clients --> [Real-Time Gateway] : WebSocket
+DriverApp --> [Real-Time Gateway] : GPS WS
+
+[Core Microservices] --> [Kafka Event Bus]
+[Core Microservices] --> [Datastores]
+@enduml
+----
+
+Interfaces and protocols:
+
+|===
+| Interface | Protocol / Technology | Direction
+| Mobile/Web ↔ API Gateway | HTTPS/REST | bi-directional
+| Mobile/Web ↔ Real-Time Gateway | Secure WebSocket | bi
+| API Gateway ↔ BFFs | HTTP/REST | internal
+| BFFs ↔ Services | HTTP/REST or gRPC | internal
+| Services ↔ Event Bus | Kafka (Avro) | async
+| Services ↔ Datastores | JDBC, Mongo driver, Redis | internal
+|===

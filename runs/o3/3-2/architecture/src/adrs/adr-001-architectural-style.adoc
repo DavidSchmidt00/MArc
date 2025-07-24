@@ -1,0 +1,37 @@
+= ADR-001: Architectural Style & Guiding Patterns
+
+Date: 2024-04-27
+
+== Status
+Accepted
+
+== Context
+The "InsureSphere CRM" must replace multiple legacy front-office systems, integrate with four heterogeneous back-end systems, support phased migration, and satisfy stringent quality attributes around integration, data consistency, security, and reliability.
+
+== Decision
+Adopt a distributed architecture composed of:
+
+* Microservices organised by domain‐driven bounded contexts and deployed on Kubernetes.
+* Hexagonal (Ports-and-Adapters) architecture at service level.
+* Event-driven communication (Kafka, CloudEvents) with CQRS + Event Sourcing for customer master data.
+* Strangler-Fig pattern to migrate existing front-office functionality.
+* Saga / Process-Manager pattern for long-running, cross-system workflows.
+* Anti-Corruption Layer (ACL) for every legacy integration edge.
+* API-first approach (REST/GraphQL + AsyncAPI) to expose all capabilities.
+
+== Rationale
+These patterns directly address the key quality goals:
+* Loose coupling & interoperability via events and APIs.
+* Evolvability and phased rollout enabled by Strangler-Fig.
+* Data consistency and auditability through CQRS + ES.
+* Isolation from legacy quirks via ACL.
+
+== Consequences
+Positive:
+* Independent deployability and scaling per microservice.
+* Clear separation between domain logic and integration details.
+* Supports graceful degradation when back-ends are unavailable.
+
+Negative:
+* Added operational complexity (Kafka, multiple data stores, workflow engine).
+* Requires disciplined event and schema governance.

@@ -1,0 +1,61 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+=== Business Context
+
+|===
+| Actor | Input | Output
+
+| Customer
+| Service selection, desired date/time, profile information
+| Booking confirmation, availability data, reminders
+
+| Barber/Staff
+| Schedule updates, blocked slots, service definitions
+| Daily/weekly/monthly appointment overview
+
+| Receptionist
+| Booking/reschedule/cancellation requests on behalf of customers
+| Booking confirmation, updated schedule view
+
+| Barbershop Owner
+| Manage services, staff profiles, working hours, time-off
+| Operational reports (service usage, booking counts)
+
+| SMS/Email Gateway
+| Notification requests (email/SMS payloads)
+| Delivery status callbacks
+|===
+
+=== Technical Context
+
+| System Component | Interface | Protocol/Channel
+|===
+| SPA Frontend
+| API endpoints (bookings, schedules, reports)
+| HTTPS (REST/GraphQL) over TLS
+
+| Load Balancer
+| Traffic distribution
+| HTTPS
+
+| App Server Cluster
+| Business logic execution
+| TCP (HTTP), Database connectivity (JDBC/SQL)
+
+| PostgreSQL
+| Relational data storage
+| TCP
+
+| Redis
+| Cache and job queue backend
+| TCP
+
+| Worker Nodes
+| Background job processing
+| TCP (Redis queue)
+
+| External SMS/Email Gateway
+| Notification dispatch
+| HTTPS REST API
+|===

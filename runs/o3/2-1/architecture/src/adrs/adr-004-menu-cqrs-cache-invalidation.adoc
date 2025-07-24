@@ -1,0 +1,41 @@
+= ADR-004: CQRS-Based Menu Service with Event-Driven Cache Invalidation
+
+Date: 2023-11-27
+Status: Accepted
+
+== Context
+Restaurant managers need to update menu items (prices, descriptions, availability) and see those changes reflected to customers in ≤ 5 s (ASR-F04). Read-side traffic (customer catalogue queries) is two orders of magnitude higher than write traffic and must meet P99 latency < 300 ms.  The system already follows microservice and event-backbone decisions (ADR-001, ADR-002).
+
+== Decision
+Implement the Restaurant Menu bounded-context with a **Command/Query Responsibility Segregation (CQRS)** pattern and an **event-driven cache-invalidation pipeline**:
+
+* **Write Side**: REST/gRPC Menu Cmd API persists changes to PostgreSQL (or event-store).
+* **Outbox Pattern**: write-side transaction inserts into `menu_outbox`; Debezium streams `MenuUpdate` events to Kafka topic `menu-updates` guaranteeing at-least-once delivery.
+* **Read Side**: Snapshot Builder consumes `menu-updates`, (re)builds denormalised catalogue JSON and writes to Redis (hot) and S3 (cold backup).
+* **Edge Propagation**: Cache Invalidation Service and Customer-WebSocket Hub also consume `menu-updates`, purge CDN objects, and push `menuRefresh` notifications.
+
+== Considered Alternatives
+
+1. Single relational DB with immediate reads
+   * Pros: simpler.
+   * Cons: cannot sustain required read volume; hot row contention; fails ≤ 5 s propagation due to absent edge invalidation.
+
+2. Dual write: API updates DB *and* Redis synchronously
+   * Pros: easy to reason.
+   * Cons: distributed transaction risk; potential inconsistency; still no CDN purge/websocket.
+
+3. Event sourcing without separate read model
+   * Pros: audit friendly.
+   * Cons: expensive query reconstruction; still needs cache layer; more complex for Restaurant squad.
+
+== Consequences
+
+* + Read path highly optimised (Redis/Edge) → meets latency targets.
+* + Propagation latency deterministic; measurable from DB commit to CDN purge.
+* + Clear separation of concerns enables independent scaling of write, read, and invalidation paths.
+* – Additional operational components (Debezium, Snapshot Builder, CDN Purger).
+* – Requires schema-evolution discipline for Kafka event.
+
+== Related Decisions
+* ADR-001 Microservice Architecture
+* ADR-002 Event Backbone using Kafka

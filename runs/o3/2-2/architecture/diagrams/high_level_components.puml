@@ -1,0 +1,63 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #FDF7E7
+  BorderColor Black
+}
+skinparam componentStyle rectangle
+
+package "Edge Layer" {
+  [API Gateway]
+  [Real-Time Gateway]
+  [BFF-Customer]
+  [BFF-Restaurant]
+  [BFF-Driver]
+}
+
+package "Core Services" {
+  [Identity & Access]
+  [Menu & Catalog]
+  [Ordering]
+  [Payment]
+  [Dispatch/Logistics]
+  [Driver Management]
+  [Notification & Communication]
+  [Ratings & Reviews]
+  [Reporting & Analytics]
+}
+
+package "Infrastructure" {
+  [Kafka Event Bus]
+  [Redis-Geo]
+  [Postgres Cluster]
+  [MongoDB Cluster]
+  [Object Storage (S3)]
+}
+
+[API Gateway] --> [BFF-Customer]
+[API Gateway] --> [BFF-Restaurant]
+[API Gateway] --> [BFF-Driver]
+[Real-Time Gateway] ..> [Kafka Event Bus]
+
+[BFF-Customer] --> [Ordering]
+[BFF-Customer] --> [Menu & Catalog]
+[BFF-Customer] --> [Identity & Access]
+
+[BFF-Restaurant] --> [Menu & Catalog]
+[BFF-Restaurant] --> [Ordering]
+
+[BFF-Driver] --> [Dispatch/Logistics]
+[BFF-Driver] --> [Driver Management]
+
+[Ordering] ..> [Kafka Event Bus]
+[Dispatch/Logistics] ..> [Kafka Event Bus]
+[Payment] ..> [Kafka Event Bus]
+[Notification & Communication] ..> [Kafka Event Bus]
+[Reporting & Analytics] ..> [Kafka Event Bus]
+
+[Dispatch/Logistics] --> [Redis-Geo]
+[Ordering] --> [Postgres Cluster]
+[Payment] --> [Postgres Cluster]
+[Menu & Catalog] --> [MongoDB Cluster]
+[Notification & Communication] --> [Object Storage (S3)]
+
+@enduml

@@ -1,0 +1,22 @@
+= ADR-009: CI/CD with Blue-Green & Canary Deployments
+
+== Context
+Frequent releases and updates must occur with minimal downtime and risk. The architecture spans multiple microservices and infrastructure components, making coordinating deployments a challenge.
+
+== Decision
+Implement a CI/CD pipeline using Git-based triggers, automated builds, and tests. Deploy using blue-green or canary strategies: 
+* Blue-Green for backend and database migrations to switch traffic between identical environments.  
+* Canary for incremental rollout of new service versions, monitoring key metrics before full promotion.
+
+== Consequences
+Positive:
+* Reduced downtime and deployment risk.  
+* Early detection of issues via canary monitoring.
+* Standardized release process.
+
+Negative:
+* Increased complexity in pipeline configuration and environment management.  
+* Additional infrastructure for parallel environments.
+
+Neutral:
+* Requires cultural adoption of GitOps and automation best practices.

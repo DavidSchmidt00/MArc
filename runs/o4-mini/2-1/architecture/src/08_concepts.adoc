@@ -1,0 +1,42 @@
+[[section-building-block-concepts]]
+== Cross-Cutting Concepts
+
+This section outlines key architectural concepts and patterns employed across multiple parts of the system.
+
+=== Microservices
+• Decomposition of the platform into independently deployable services aligned to core domains (Customer, Restaurant, Order, Driver, Payment).  
+• Each service has its own datastore and CI/CD pipeline, reducing coupling and supporting autonomous team ownership.
+
+=== API Gateway Pattern
+• Single entry point for all client interactions.  
+• Handles authentication/authorization (OAuth2/JWT), TLS termination, routing, rate limiting, and request validation.
+
+=== Event-Driven Architecture
+• Asynchronous communication via Kafka event bus.  
+• Services publish domain events (OrderCreated, MenuUpdated, DriverLocation) to decouple producers from consumers.  
+• Supports high throughput, resilience under load, and eventual consistency where appropriate.
+
+=== Saga Pattern for Distributed Transactions
+• Manages long-running workflows (order placement, payment, driver assignment) without two-phase commit.  
+• Each step publishes compensating events in case of failures, preserving data consistency across services.
+
+=== CQRS (Command Query Responsibility Segregation)
+• Separates write models (commands via REST/gRPC) from read models (query-optimized views via cache or event sourcing).  
+• Improves performance and scalability of read-heavy operations (e.g., customer browsing, driver lists).
+
+=== Hexagonal Architecture (Ports & Adapters)
+• Isolates core business logic from infrastructure concerns.  
+• Facilitates testing and replacement of external integrations (databases, message brokers, third-party APIs).
+
+=== Containerization & Orchestration
+• All services are packaged as Docker containers and deployed on Kubernetes.  
+• Infrastructure provisioned via Terraform, with GitOps-driven CI/CD pipelines for automated deployment and rollback.
+
+=== Observability & Resilience Patterns
+• Distributed tracing (OpenTelemetry), centralized logging (ELK), metrics/alerts (Prometheus/Grafana).  
+• Resilience patterns: circuit breakers, retries with backoff, bulkheads to isolate resource pools.
+
+=== Security & Compliance
+• mTLS for inter-service communication, OAuth2/JWT for client authentication.  
+• PCI DSS compliance for payment processing, encryption at rest for sensitive data.  
+• Rate limiting and WAF rules at the API Gateway to mitigate abuse and DDoS.

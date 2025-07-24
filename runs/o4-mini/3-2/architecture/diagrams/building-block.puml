@@ -1,0 +1,40 @@
+@startuml
+component "API Gateway" as GW
+component "ESB Connectors" as ESB
+component "Anti-Corruption Layer" as ACL
+component "Kafka Topics" as Kafka
+package "Domain Microservices" {
+  component "Customer Service" as CS
+  component "Policy Service" as PS
+  component "Claims Service" as CMS
+  component "Interaction Service" as IS
+  component "Marketing Service" as MS
+  component "Risk Service" as RS
+}
+database "Service Databases" as DB
+component "ETL Pipeline" as ETL
+
+GW --> CS : REST
+GW --> PS : REST
+GW --> CMS : REST
+GW --> IS : REST
+GW --> MS : REST
+GW --> RS : REST
+
+CS --> Kafka : publish events
+PS --> Kafka : publish events
+
+Kafka --> CS : subscribe
+Kafka --> PS : subscribe
+
+ESB --> ACL : adapt legacy
+ACL --> CS : feed events
+
+ETL --> DB : data migration
+CS --> DB
+PS --> DB
+CMS --> DB
+IS --> DB
+MS --> DB
+RS --> DB
+@enduml

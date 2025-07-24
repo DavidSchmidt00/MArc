@@ -1,0 +1,11 @@
+= Architecture Decision Records – Index
+:toc:
+
+|===
+|ADR ID | Title | Date
+|001 | Adopt Hexagonal Modular Monolith | 2024-06-26
+|002 | PostgreSQL Exclusion Constraint for Conflict-Free Booking | 2024-06-26
+|003 | Transactional Outbox with RabbitMQ | 2024-06-26
+|004 | EU-Resident Notification Providers | 2024-06-26
+|005 | Observability with Prometheus & Structured Logs | 2024-06-26
+|===
