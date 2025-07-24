@@ -24,11 +24,12 @@ The system is composed of the following agents, each with a specific role:
 
 ### 1. Setup
 
-Before running the system, ensure you have all the required dependencies installed.
+This project is configured as a devcontainer with all dependencies pre-installed. To get started:
 
-```bash
-pip install -r requirements.txt
-```
+1. Create the `APIKEY.env` file (see step 2 below)
+2. Open the project in VS Code
+3. When prompted, select "Reopen in Container" to load the devcontainer
+4. All required dependencies are already installed and ready to use
 
 ### 2. API Keys
 
