@@ -1,0 +1,79 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+=== Business Context
+The “Fork & Knife” platform acts as a black‐box service coordinating three primary user groups and external systems. The following table summarizes domain‐specific inputs and outputs.
+
+|===
+| Communication Partner | Inputs                                                   | Outputs                                              
+| Customer App         | • Restaurant search/filter criteria
+• Order placement request
+• Payment details                                       | • Order confirmation
+• Real‐time order status & driver location
+• Ratings and reviews                                     
+| Restaurant Portal    | • Menu create/update commands
+• Order acceptance/rejection
+• Preparation time updates                             | • New order notifications
+• Status update acknowledgments
+• Financial reports                                         
+| Driver App           | • Driver status (online/offline)
+• Job acceptance/decline
+• GPS location updates                                  | • Available job offers
+• Optimized pickup/delivery routes                       
+| Payment Provider     | • Tokenized payment request                              | • Payment success/failure callbacks                   
+| Mapping Service      | • Geocoding and routing requests                          | • Map tiles, geolocation data, optimized routes       
+|===
+
+=== Technical Context
+This section outlines the technical interfaces, channels, and protocols between the system and its environment.
+
+[plantuml,context-diagram,svg]
+----
+@startuml
+actor Customer as C
+actor "Restaurant Staff" as R
+actor "Delivery Driver" as D
+
+node "API Gateway" as APIGW
+
+package "Microservices" {
+  component "Order Service" as OS
+  component "Restaurant Service" as RS
+  component "Driver Service" as DS
+  component "Payment Service" as PS
+  component "Notification Service" as NS
+}
+
+database "Event Broker (Kafka/RabbitMQ)" as EB
+
+APIGW --> OS : REST/gRPC
+APIGW --> RS : REST/gRPC
+APIGW --> DS : REST/gRPC
+APIGW --> PS : REST/gRPC
+OS --> EB : publish events
+DS --> EB : publish location & job events
+RS --> EB : publish order-status events
+EB --> NS : subscribe to events
+
+C --> APIGW : HTTPS (OAuth2/JWT, WebSocket)
+R --> APIGW : HTTPS (OAuth2/JWT)
+D --> APIGW : HTTPS (OAuth2/JWT)
+APIGW --> "Stripe (Payment)" : HTTPS/REST
+APIGW --> "Google Maps (Geolocation)" : HTTPS/REST
+@enduml
+----
+
+The API Gateway provides a unified entry point over HTTPS (REST/gRPC) and WebSockets, handling authentication (OAuth2/JWT), rate limiting, and routing. Each microservice owns its own datastore. Real‐time communication is achieved via an external event broker.
+
+=== Mapping Inputs/Outputs to Channels
+
+|===
+| Domain I/O                       | Communication Channel             | Protocol                
+| Search/filter criteria           | API Gateway → Customer Service    | HTTPS/REST
+| Order placement & status updates | Bidirectional via WebSocket       | WSS (over TLS)
+| Menu management commands         | API Gateway → Restaurant Service  | HTTPS/REST
+| Driver GPS updates               | API Gateway → Driver Service      | HTTPS/REST (poll/push)
+| Event notifications              | Event Broker → Notification Svc   | AMQP/Kafka protocols
+| Payment transactions             | API Gateway → Stripe Adapter      | HTTPS/REST
+| Geolocation & routing data       | API Gateway → Maps Adapter        | HTTPS/REST
+|===

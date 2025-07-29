@@ -1,0 +1,24 @@
+= ADR-001 Choose Layered Modular-Monolith
+
+== Context
+
+Prime-Cuts Booking must support ~100 concurrent users, deliver 99.9 % availability, and stay “as simple and cheap as possible”. The team has 3 full-stack developers experienced with Node.js/React but no dedicated DevOps staff. Managed PaaS offerings (Heroku, AWS Fargate) are available.
+
+We considered three architectural styles:
+
+* Microservices per bounded context
+* Monolithic 3-tier (classic MVC)
+* Layered Modular-Monolith (Hexagonal / Ports & Adapters)
+
+== Decision
+
+We will implement the backend as a single deployable artifact (container/dyno) following a Layered Modular-Monolith style with clear module boundaries (Booking, Scheduling, Admin, Notifications). Each module exposes ports/interfaces; infrastructure details are isolated in adapters.
+
+== Consequences
+
++ Lower operational overhead: one service to deploy, monitor, and scale horizontally.
++ In-process calls avoid network latency and distributed-transaction complexity.
++ Clear module boundaries preserve ability to extract microservices later if scale demands.
++ Simpler local development and CI pipeline.
+− A failure in the process can affect all modules (mitigated by horizontal replicas + health checks).
+− Scaling must be coarse-grained (entire application), which is acceptable for projected load.

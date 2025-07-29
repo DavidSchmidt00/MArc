@@ -1,0 +1,21 @@
+= ADR-0001: Two-Tier Monolithic Architecture
+Date: 2024-06-10
+
+== Context
+Prime-Cuts Booking must be delivered rapidly for a small barbershop with limited devops. The system must be easy to deploy and operate, while satisfying requirements for performance, reliability, and maintainability. Stakeholders include non-technical barbershop staff and a small development team.
+
+== Decision
+We will adopt a two-tier monolithic architecture comprising:
+* A front-end Single-Page Application (SPA) using React or Vue.js, delivered via CDN.
+* A backend monolithic service built in Node.js/Express (or Python/Django) exposing RESTful endpoints and containing all business logic.
+
+This monolith will handle UI serving, API requests, business workflows, persistence, and background jobs within a single deployable unit (packaged as a Docker container).
+
+== Consequences
+* Positive:
+  * Simplified deployment and operational overhead—one artifact to build, deploy, and monitor.
+  * Easier to develop and test end-to-end features across UI and backend.
+  * Clear separation between UI and backend tiers for caching and scaling.
+* Negative:
+  * Potential scalability limits as all functionality resides in one codebase. Mitigated by horizontal scaling of stateless API instances.
+  * Risk of tight coupling across modules over time; countered with clear module boundaries.

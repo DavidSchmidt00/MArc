@@ -1,0 +1,32 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+To meet the system’s functional requirements and quality goals, we adopt a cloud-native microservice architecture, an event-driven backbone, and a robust API gateway at the edge. Key strategy points:
+
+* Microservices Decomposition
+** Each core domain is implemented as an independent microservice (Auth & Identity, Customer, Restaurant, Order, Driver, Payment, Notification, Mapping & Routing).
+** Services have dedicated datastores to achieve loose coupling and independent scalability.
+
+* API Gateway
+** Central reverse proxy (Envoy/Kong) provides TLS termination, request routing, authentication/authorization, rate limiting, protocol translation, and WebSocket/SSE proxying.
+** BFF patterns allow per-client request aggregation.
+
+* Event-Driven Integration
+** Kafka-based event bus decouples services and supports high-throughput, asynchronous communication.
+** Domain events (OrderCreated, MenuUpdated, DriverLocation, PaymentCompleted) drive notifications and analytics.
+
+* Data Management
+** Relational DB (PostgreSQL) for strongly consistent domains (orders, payments).
+** Document DB (MongoDB) for flexible schemas (customers, restaurants, drivers).
+** Redis for caching, session store, geo-queries and rate-limiter state.
+** Object storage (S3) for static assets (menu images, receipts).
+
+* Resilience & Scalability
+** Stateless containers deployed on Kubernetes across multiple availability zones with horizontal autoscaling.
+** Circuit breakers, retries, bulkheads, and backpressure protect services under load.
+** Saga pattern coordinates distributed transactions (order + payment + inventory + driver assignment).
+
+* Observability & DevOps
+** GitOps pipelines ensure repeatable, controlled deployments (Terraform, Helm).
+** Centralized logging (ELK), metrics (Prometheus/Grafana), and distributed tracing (OpenTelemetry/Jaeger).
+** CI-driven security validation for WAF rules and feature-flag configurations.

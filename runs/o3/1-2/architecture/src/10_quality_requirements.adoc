@@ -1,0 +1,18 @@
+= 10. Quality Requirements
+:toc:
+
+== Quality Tree
+*Usability* → responsive SPA, ≤3 clicks to book.
+*Reliability* → 24×7, 99.5 % uptime, ACID bookings, no lost events.
+*Performance* → slot query ≤2 s @ 50 concurrent users.
+*Security* → HTTPS-only, encrypted PII, RBAC, GDPR compliance.
+*Maintainability* → modular monolith, ≥80 % test coverage, CI/CD.
+
+== Quality Scenarios
+|===
+|Scenario | Stimulus | Response | Acceptance
+|Book appointment peak hour | 50 users query slots | Response within 2 s | Artillery test passes.
+|Conflict booking | Two customers attempt same slot | One succeeds, other gets 409 | No double booking.
+|Message broker outage | RabbitMQ offline | Outbox retries; emails sent when broker back | No lost notifications.
+|GDPR delete | Customer requests deletion | Data anonymised within 24 h | PII removed, bookings retain aggregate stats.
+|===

@@ -1,0 +1,33 @@
+@startuml
+skinparam participantPadding 5
+actor RMgr
+actor Cust
+participant CmdAPI as Cmd
+participant CP
+database DB
+queue Outbox as OB
+participant CDC
+participant Kafka
+participant SnapB as SB
+database Redis
+participant Purge
+cloud CDN
+participant CAPI
+participant WS
+
+RMgr -> Cmd : UpdateItem
+Cmd -> CP : validate + map
+CP -> DB : update
+CP -> OB : outbox row
+CDC --> OB : capture
+CDC -> Kafka : MenuUpdate
+Kafka -> SB : MenuUpdate
+SB -> Redis : snapshot
+Kafka -> Purge : MenuUpdate
+Purge -> CDN : PURGE
+Kafka -> CAPI : MenuUpdate
+CAPI -> WS : refresh
+WS -> Cust : push
+Cust -> CDN : GET catalogue
+CDN --> Cust : fresh JSON
+@enduml

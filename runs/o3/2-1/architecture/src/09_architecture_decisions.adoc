@@ -1,0 +1,8 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+The following Architecture Decision Records (ADRs) capture key, lasting decisions for the “Fork & Knife” platform.
+
+* xref:adrs/adr-001-microservices.adoc[ADR-001: Microservice Architecture with Bounded Contexts]
+* xref:adrs/adr-002-event-backbone-kafka.adoc[ADR-002: Event Backbone using Apache Kafka]
+* xref:adrs/adr-003-order-payment-saga.adoc[ADR-003: Orchestrated Saga for Order, Payment and Dispatch]

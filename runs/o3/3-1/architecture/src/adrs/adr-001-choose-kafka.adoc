@@ -1,0 +1,50 @@
+= ADR-001 Choose Apache Kafka as Messaging Backbone
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+InsureSphere CRM must integrate with multiple legacy systems and support both real-time and near-real-time data exchange. The architecture requires:
+
+* High-throughput, low-latency, durable messaging for event publishing and consumption.
+* Exactly-once or at-least-once delivery semantics.
+* Schema evolution and validation to keep a canonical data model consistent.
+* Native Kubernetes support and proven operators for OpenShift.
+* Compatibility with an event-sourcing / outbox pattern and CDC tooling.
+
+Several messaging technologies were considered:
+
+* IBM MQ – already present for mainframe linkage but licence-heavy, limited cloud-native tooling, queue (point-to-point) oriented.
+* Apache ActiveMQ Artemis – open-source, JMS compatible, lighter than IBM MQ but lower ecosystem adoption for event streaming at scale.
+* RabbitMQ – strong at traditional messaging, weaker for high-throughput persistent event logs and exactly-once semantics.
+* Apache Pulsar – promising, but less organisational experience and smaller ecosystem in the company.
+* Apache Kafka – de-facto standard for streaming, rich tooling (Strimzi operator, Schema Registry, MirrorMaker2, ksqlDB, Debezium), large skill pool.
+
+== Decision
+We will use **Apache Kafka** (deployed via the *Strimzi Operator* on OpenShift) as the central messaging and event-streaming platform for InsureSphere CRM.
+
+Key aspects:
+
+* Topics encoded with Avro and registered in Confluent Schema Registry (community edition).
+* OAuth2 / SASL authentication integrated with Keycloak for fine-grained ACLs.
+* Multi-AZ cluster with ISR=3 for high availability.
+* MirrorMaker2 configured for active/passive disaster-recovery replication.
+* Debezium Outbox and Change-Data-Capture connectors standardised for microservice data change publication.
+
+== Consequences
+Positive:
+
+* Satisfies Integration & Interoperability (ASR #1) and Data Consistency (ASR #2) by enabling reliable, ordered, durable event streams.
+* Rich ecosystem shortens development (Kafka Streams, ksqlDB, Connectors).
+* Operator-backed deployment aligns with the OpenShift standard platform.
+* Supports exactly-once processing where needed.
+
+Negative / Trade-offs:
+
+* Operational complexity (cluster tuning, monitoring, storage).
+* Additional skill ramp-up for teams unfamiliar with Kafka Streams.
+* Higher resource footprint compared to light brokers like RabbitMQ.
+
+Mitigations:
+
+* Dedicated platform-engineering team to operate Kafka and provide self-service topics.
+* Include Kafka metrics and alerting dashboards from day-1 using Prometheus & Grafana.

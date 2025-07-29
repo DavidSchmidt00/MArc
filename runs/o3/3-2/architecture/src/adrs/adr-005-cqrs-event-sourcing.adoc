@@ -1,0 +1,12 @@
+= ADR-005 CQRS + Event Sourcing for Customer & Task Contexts
+
+== Context
+Customer 360 dashboard and audit requirements (10-year history) demand historical reconstruction.  The workload is read-heavy but requires traceability of changes.
+
+== Decision
+Apply *CQRS + Event Sourcing* to Customer and Task bounded contexts: write model stores events, read model builds materialised Postgres/Elastic views via Kafka consumers.
+
+== Consequences
+* ✅  Full audit trail and lightweight temporal queries.
+* ✅  Scalable read side optimised for dashboard performance.
+* ⚠  Higher complexity, dual models, eventual consistency.

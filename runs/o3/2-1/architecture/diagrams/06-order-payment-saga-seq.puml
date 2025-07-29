@@ -1,0 +1,42 @@
+@startuml
+actor Customer
+participant "API Gateway" as APIGW
+participant "Order-API" as OrderAPI
+participant "Order DB" as OrderDB
+participant "Kafka (order-events)" as KafkaOrder
+participant "Saga Orchestrator" as Saga
+participant "Payment-API" as PayAPI
+participant "Payment Service" as Payment
+participant "Stripe" as Stripe
+participant "Dispatch-API" as DispatchAPI
+participant "Kafka (dispatch-events)" as KafkaDisp
+participant "Dispatch Service" as Dispatch
+participant "Driver App" as Driver
+
+== Order Creation ==
+Customer -> APIGW: POST /orders
+APIGW -> OrderAPI: CreateOrderRequest
+OrderAPI -> OrderDB: insert NEW order
+OrderAPI -> KafkaOrder: OrderCreated (outbox CDC)
+APIGW <-- OrderAPI: 201 Created + orderId
+
+== Saga Step 1: Authorize Payment ==
+Saga <-- KafkaOrder: OrderCreated
+Saga -> PayAPI: AuthorizeCharge(orderId, amount)
+PayAPI -> Payment: process authorization
+Payment -> Stripe: charge()
+Stripe --> Payment: success
+Payment -> PayAPI: PaymentAuthorized
+PayAPI --> Saga: ok
+Saga -> KafkaOrder: PaymentAuthorized
+
+== Saga Step 2: Dispatch Driver ==
+Saga -> DispatchAPI: RequestDelivery(orderId, pickup, dropoff)
+DispatchAPI -> Dispatch: match driver
+Dispatch -> Driver: offer job
+Driver --> Dispatch: accept
+Dispatch -> KafkaDisp: DriverAssigned(orderId, driverId)
+Saga <-- KafkaDisp: DriverAssigned
+Saga -> OrderDB: update status DISPATCHED
+Saga -> KafkaOrder: OrderDispatched
+@enduml

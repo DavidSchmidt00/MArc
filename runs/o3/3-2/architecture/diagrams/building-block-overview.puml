@@ -1,0 +1,54 @@
+@startuml
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+package "InsureSphere CRM" as crm {
+  component "React SPA" as spa
+  component "API Gateway" as api
+  component "GraphQL BFF" as bff
+
+  package "Domain Microservices" {
+    component "Customer Context" as cc
+    component "Interaction Service" as is
+    component "Task & Alert Service" as tas
+    component "Marketing Segment Service" as mss
+    component "Policy Service" as ps
+  }
+
+  queue "Kafka Event Bus" as kafka
+  component "Camunda 8 (Saga)" as camunda
+  component "ESB / ACL" as esb
+}
+
+package "Legacy / External Systems" {
+  database "Policy Mainframe" as mainframe
+  database "Claims System" as claims
+  database "Billing AS/400" as billing
+  database "Teradata DWH" as dwh
+  cloud "Salesforce Marketing Cloud" as sfmc
+}
+
+spa --> api
+api --> bff
+bff --> cc
+bff --> is
+bff --> tas
+
+cc --> kafka
+is --> kafka
+ps --> kafka
+kafka --> tas
+kafka --> mss
+
+camunda --> tas
+camunda --> ps
+cc --> camunda
+
+cc --> esb
+ps --> esb
+esb --> mainframe
+esb --> claims
+esb --> billing
+esb --> dwh
+mss --> sfmc
+@enduml

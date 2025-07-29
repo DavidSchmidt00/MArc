@@ -1,0 +1,49 @@
+@startuml
+!define COMPONENT(x) component "x" as x
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor Black
+}
+skinparam cloud {
+  BackgroundColor LightBlue
+}
+cloud "Azure West Europe (Primary)" {
+  node "AKS Cluster" as aks_primary {
+    component "Domain Microservices" as ms
+    component "API Gateway (Kong)" as gateway
+  }
+  database "PostgreSQL Flexible Server (Primary)" as pg_primary
+  queue "Confluent Kafka (West-EU)" as kafka_primary
+  node "MuleSoft RTF (Adapters)" as mule_primary
+  storage "Blob Storage (WORM)" as blob_primary
+}
+cloud "Azure North Europe (DR)" {
+  node "AKS Cluster - DR" as aks_dr
+  database "PostgreSQL Geo-Replica" as pg_dr
+  queue "Kafka Mirror (North-EU)" as kafka_dr
+  storage "Blob Storage (DR)" as blob_dr
+  node "MuleSoft RTF (Standby)" as mule_dr
+}
+cloud "Camunda 8 SaaS (dual-region EU)" as camunda
+cloud "Salesforce Marketing Cloud (US)" as sfmc
+actor "Browser / Agent UI" as user
+
+user --> gateway : HTTPS
+gateway --> ms : REST / GraphQL
+ms --> kafka_primary : events
+ms --> pg_primary : read/write
+kafka_primary <--> kafka_dr : MirrorMaker 2
+pg_primary --> pg_dr : WAL Streaming
+ms --> mule_primary : Async API
+mule_primary --> sfmc : REST + Webhook
+ms --> camunda : gRPC
+ms --> blob_primary : audit events (nightly)
+
+blob_primary --> blob_dr : Geo-Replication
+mule_primary --> mule_dr : Async Config Sync
+
+gateway ..> aks_primary : deployed_on
+ms ..> aks_primary
+mule_primary ..> "Azure West Europe (Primary)"
+
+@enduml

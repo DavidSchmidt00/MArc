@@ -1,0 +1,11 @@
+= 2. Architecture Constraints
+
+This document section collects all external constraints and boundary conditions that the architecture must adhere to.
+
+* **Microservices Decomposition**: The system must be built as independently deployable, loosely coupled microservices, each owning its own data store.
+* **API Gateway**: All client interactions must go through a centralized API gateway that handles authentication (OAuth2/JWT), rate limiting, and routing.
+* **Event-Driven Communication**: Real-time updates (order status, driver location) must use an event broker (Kafka or RabbitMQ).
+* **Regulatory Compliance**: Payment processing must comply with PCI-DSS standards.
+* **Cloud Infrastructure**: Deployment must utilize a container orchestration platform like Kubernetes (EKS/GKE) in a multi-AZ cloud environment.
+* **Third-Party Integrations**: Must integrate with third-party services for payments (e.g., Stripe) and mapping/geolocation (e.g., Google Maps) via adapter patterns.
+* **Offline Capabilities**: Restaurant order intake tablet must support local queuing and sync for network outages.

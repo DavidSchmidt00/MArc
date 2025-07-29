@@ -1,0 +1,20 @@
+= ADR-001: Microservices & Hexagonal Architecture
+
+== Context
+The CRM must be flexible, maintainable, and support independent teams working on distinct domains like Customer, Policy, Claims, etc. Legacy systems and protocols differ significantly, and domain logic should not be polluted by infrastructure concerns.
+
+== Decision
+We will adopt a microservices architecture, implementing each bounded context as an independent service. Each service will follow the Hexagonal Architecture (Ports and Adapters) pattern to isolate business logic from delivery and infrastructure.  
+
+== Consequences
+Positive:
+* High modularity and independent deployability.
+* Teams can own and evolve services separately.
+* Testable core logic.
+
+Negative:
+* Operational complexity (service discovery, distributed tracing).
+* Increased initial setup for CI/CD.
+
+Neutral:
+* Technology diversity requires governance to avoid sprawl.

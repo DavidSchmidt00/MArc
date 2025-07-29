@@ -1,0 +1,47 @@
+@startuml
+actor Customer
+actor RestaurantManager as "Restaurant Manager"
+actor Driver
+actor PlatformAdmin as "Platform Administrator"
+
+rectangle "Fork & Knife System" {
+  [API Gateway]
+  [Auth & Identity Service]
+  [Customer Service]
+  [Restaurant Service]
+  [Order Service]
+  [Driver Service]
+  [Payment Service]
+  [Notification Service]
+  [Mapping & Routing Service]
+  [Kafka/EventBus]
+  [PostgreSQL]
+  [MongoDB]
+}
+
+Customer -> [API Gateway]
+RestaurantManager -> [API Gateway]
+Driver -> [API Gateway]
+PlatformAdmin -> [API Gateway]
+
+[API Gateway] --> [Auth & Identity Service]
+[API Gateway] --> [Customer Service]
+[API Gateway] --> [Restaurant Service]
+[API Gateway] --> [Order Service]
+[API Gateway] --> [Driver Service]
+[API Gateway] --> [Payment Service]
+[API Gateway] --> [Notification Service]
+[API Gateway] --> [Mapping & Routing Service]
+
+[Order Service] --> [Kafka/EventBus]
+[Restaurant Service] --> [Kafka/EventBus]
+[Driver Service] --> [Kafka/EventBus]
+[Kafka/EventBus] --> [Notification Service]
+
+[Order Service] --> [Payment Service]
+[Payment Service] --> [PostgreSQL]
+[Order Service] --> [PostgreSQL]
+[Customer Service] --> [MongoDB]
+[Restaurant Service] --> [MongoDB]
+[Driver Service] --> [MongoDB]
+@enduml

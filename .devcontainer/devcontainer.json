@@ -1,0 +1,27 @@
+{
+	"name": "Python 3",
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.13-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/python:1":{},
+		"ghcr.io/devcontainers/features/git:1":{}
+	},
+	"forwardPorts": [8080],
+	"postCreateCommand": "pip3 install -U -r requirements.txt",
+	"runArgs": [
+		"--env-file",
+		"./APIKEY.env"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"asciidoctor.asciidoctor-vscode",
+				"ms-azuretools.vscode-containers",
+				"GitHub.copilot-chat",
+				"GitHub.copilot"
+			]
+		}
+	},
+	"containerEnv": {
+		"PYTHONPATH": "$PYTHONPATH:/workspaces/Implementierung"
+	}
+}

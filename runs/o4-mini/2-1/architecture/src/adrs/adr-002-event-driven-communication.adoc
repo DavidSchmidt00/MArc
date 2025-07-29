@@ -1,0 +1,20 @@
+= ADR-002: Event-Driven Communication with Kafka
+
+== Context
+
+The platform requires near real-time updates (order status, driver location) and decoupling between services to handle peak loads. Synchronous communication under high load can lead to bottlenecks and cascading failures.
+
+== Decision
+
+We will use an event-driven architecture using Kafka as the event bus. Services will publish domain events (e.g., OrderCreated, MenuUpdated, DriverLocation) to topics. Subscribers can process events asynchronously.
+
+== Consequences
+
+* Positive:
+** Loose coupling between services improves resilience.
+** High throughput and buffering capabilities handle burst traffic.
+** Event sourcing provides an audit log for analytics and troubleshooting.
+
+* Negative:
+** Increased complexity in handling eventual consistency and error handling.
+** Operational overhead of managing Kafka clusters.

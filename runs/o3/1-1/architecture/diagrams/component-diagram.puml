@@ -1,0 +1,49 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+package "Presentation" {
+  [SPA Frontend]
+}
+
+package "API Layer" {
+  [API Gateway (NestJS)]
+}
+
+package "Application Services" {
+  component BookingService
+  component SchedulingService
+  component AdminService
+}
+
+package "Domain" {
+  component "Booking Domain" as BookingDomain
+  component "Notification Domain" as NotificationDomain
+}
+
+package "Infrastructure" {
+  database PostgreSQL
+  queue SQS
+  queue Redis
+  component "Notification Worker\n(AWS Lambda)" as Worker
+  component "SendGrid"
+  component "Twilio"
+}
+
+[SPA Frontend] --> "API Gateway (NestJS)"
+"API Gateway (NestJS)" --> BookingService
+"API Gateway (NestJS)" --> SchedulingService
+"API Gateway (NestJS)" --> AdminService
+
+BookingService --> BookingDomain
+SchedulingService --> BookingDomain
+BookingService --> PostgreSQL
+SchedulingService --> PostgreSQL
+AdminService --> PostgreSQL
+
+BookingDomain --> SQS
+SQS --> Worker
+Worker --> SendGrid
+Worker --> Twilio
+
+SchedulingService --> Redis
+@enduml

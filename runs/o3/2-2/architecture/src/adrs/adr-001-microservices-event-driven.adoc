@@ -1,0 +1,27 @@
+= ADR-001: Adopt Microservice + Event-Driven Architecture
+
+== Status
+Accepted – 2024-05-05
+
+== Context
+
+The Fork & Knife platform must satisfy strict scalability, real-time, reliability and team autonomy requirements. A monolithic or single-database architecture would hinder independent feature delivery and scaling of individual marketplace domains (ordering, dispatch, payment, etc.).  Event propagation with sub-second latency is fundamental for live order tracking and driver dispatch, which traditional point-to-point REST integrations struggle to achieve.
+
+== Decision
+
+We will structure the backend as a set of independently deployable microservices, each owning its data store, and interconnected by an asynchronous event bus (Apache Kafka).  Synchronous REST/gRPC calls will be used only for request/response interactions requiring immediate confirmation, while all domain events (order status, driver location, menu changes, payment events) will be published to Kafka.
+
+== Consequences
+
+Positive:
+
+* Horizontal scalability – services scale independently based on load characteristics.
+* Team autonomy – small teams can own services aligned to bounded contexts.
+* Real-time event streaming via Kafka enables <2 s propagation.
+* Fault isolation – failure in one service does not cascade if consumers degrade gracefully.
+
+Negative/Trade-offs:
+
+* Operational complexity – requires sophisticated DevOps, monitoring, and data governance.
+* Data consistency becomes eventual; need for outbox pattern and idempotency.
+* Increased latency for some cross-service reads; mitigated by read models.

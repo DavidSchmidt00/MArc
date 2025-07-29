@@ -1,0 +1,16 @@
+= 1. Introduction and Goals
+
+The “Fork & Knife” Delivery Platform is a three-sided marketplace that connects Customers, Restaurants, and Delivery Drivers through web and mobile applications. It aims to provide a restaurant-friendly, transparent food delivery service, reducing commission fees and improving order management and tracking in real time.
+
+== Stakeholders
+* Customers – Browse restaurants, place orders, track deliveries, and provide feedback.
+* Restaurant Owners/Managers – Manage menus, accept/reject orders, monitor sales, and communicate with customers and drivers.
+* Delivery Drivers – Receive and accept delivery jobs, navigate routes, and manage earnings.
+* Platform Administrators – Oversee platform operations, user support, financial reporting, and system configurations.
+
+== Goals
+* Provide a responsive, intuitive user experience across web, iOS, and Android platforms.
+* Enable real-time order status updates and driver tracking with sub-2-second latency.
+* Maintain high availability (99.9% uptime) and resilience during peak meal times.
+* Ensure secure, PCI-DSS–compliant payment processing with leading payment providers.
+* Foster independent development, deployment, and scalability via microservices architecture.

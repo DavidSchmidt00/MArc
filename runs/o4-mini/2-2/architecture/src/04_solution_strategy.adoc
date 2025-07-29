@@ -1,0 +1,13 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+The following high‐level strategy and key decisions shape the “Fork & Knife” architecture, balancing functional needs and quality goals.
+
+* **Microservices Architecture**: We decompose the system into bounded‐context services (Customer, Restaurant, Order, Driver, Payment, Notification, Reporting) to enable independent development, deployment, and scaling (see ADR-001).
+* **API Gateway Pattern**: All external and cross‐service calls route through a centralized API Gateway to handle TLS termination, OAuth2/JWT authentication, rate limiting, and routing (see ADR-002).
+* **Event‐Driven Communication**: A message broker (Kafka or RabbitMQ) decouples services and supports real‐time order and driver updates via publish/subscribe (see ADR-003).
+* **Containerized Cloud Deployment**: We target Kubernetes (EKS/GKE) for container orchestration, auto‐scaling, and high availability across multiple AZs (see ADR-004).
+* **Adapter Patterns for Integrations**: External dependencies (Stripe for payments, Google Maps for geolocation) are encapsulated behind adapters to allow future provider swaps (see ADR-005 and ADR-006).
+* **CQRS & Event Sourcing (where needed)**: Read‐optimized views and audit logs are built from event streams to satisfy performance, auditability, and reporting requirements.
+
+These decisions ensure that the system meets the key quality requirements of scalability, reliability, real‐time responsiveness, and maintainability. Detailed rationale and consequences are captured in the corresponding ADRs.

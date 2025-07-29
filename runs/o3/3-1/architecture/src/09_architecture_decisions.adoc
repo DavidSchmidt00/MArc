@@ -1,0 +1,16 @@
+[[section-architecture-decisions]]
+== Architecture Decisions
+
+This section lists all significant architectural decisions for InsureSphere CRM. Each decision is documented as an ADR (Architecture Decision Record) located in `architectures/src/adrs/`.
+
+[options="header",cols="1,3,2,2"]
+|===
+|ADR ID|Title|Status|Date
+|000|Template (do not modify)|-|-
+|001|Choose Apache Kafka as Messaging Backbone|Accepted|2024-06-12
+|002|Adopt Apache Camel-K as Integration Hub Runtime|Accepted|2024-06-12
+|003|Define Dual Consistency Model (LRA-2PC + Outbox/Saga)|Accepted|2024-06-12
+|004|Implement Cryptographic Delete for GDPR Erasure|Accepted|2024-06-12
+|005|Select Keycloak + 3scale for Security & API Gateway|Accepted|2024-06-12
+|006|Adopt Active/Passive DR with MirrorMaker2 & Logical Replication|Accepted|2024-06-12
+|===

@@ -1,0 +1,22 @@
+@startuml
+actor Agent
+participant "React SPA" as SPA
+participant "API Gateway" as API
+participant "GraphQL BFF" as BFF
+participant "Customer Context Service" as CC
+participant "Interaction Service" as IS
+database "Read Model DB" as RM
+
+Agent -> SPA : Type customer name
+SPA -> API : GET /graphql (searchCustomer)
+API -> BFF : Forward request JWT
+BFF -> CC : queryCustomerByName()
+CC -> RM : SQL SELECT ...
+RM --> CC : customer basic data
+BFF -> IS : getInteractions(customerId)
+IS -> RM : SQL SELECT ...
+RM --> IS : last 5 interactions
+BFF --> API : aggregated JSON
+API --> SPA : 200 OK JSON
+SPA -> Agent : Render dashboard (<3 s)
+@enduml

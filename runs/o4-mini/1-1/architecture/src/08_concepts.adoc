@@ -1,0 +1,34 @@
+[[section-concepts]]
+== Cross-Cutting Concepts
+
+This section describes fundamental architectural concepts and patterns used across multiple modules.
+
+=== Security
+* TLS encryption for all transport.
+* JWT-based authentication; role-based access control (RBAC) enforced in API middleware.
+* Encryption of PII at rest (column-level or full-disk encryption in PostgreSQL).
+* GDPR compliance: consent capture, data retention/purge policies.
+
+=== Caching and Data Consistency
+* Redis-based cache for availability queries, with time-to-live (TTL) and cache invalidation on schedule or booking updates.
+* Distributed locks using Redis to enforce mutual exclusion on critical booking operations.
+
+=== Asynchronous Processing
+* Redis-backed job queue for background tasks (notifications, reporting).
+* Job consumers (Notification Manager) within the same codebase as separate worker processes.
+* Retry logic with exponential backoff; idempotent job handlers.
+
+=== Observability
+* Centralized logging with correlation IDs; structured JSON logs.
+* Metrics exported to Prometheus (API latency, error rates, queue depths, DB performance).
+* Alerting rules for SLA breaches (P95 >2 s, queue backlog > threshold, high DB error rates).
+
+=== Resilience Patterns
+* Circuit breaker on external calls (Email/SMS providers).
+* Bulkhead isolation for job consumers to avoid cascading failures.
+* Health endpoints for readiness/liveness; utilized by orchestration platform.
+
+=== Modular Monolith
+* Logical modules separated by domain contexts; packages within a single code repository.
+* Clear API contracts between modules; internal use of repository pattern for data access.
+* Feature flags for toggling upcoming capabilities (e.g., payment integration).

@@ -1,0 +1,25 @@
+@startuml
+rectangle "SPA Frontend" as SPA
+rectangle "API Layer" as API
+rectangle "Booking Service" as BS
+rectangle "Schedule Management Service" as SMS
+rectangle "Notification Service" as NS
+rectangle "Reporting Service" as RS
+database "PostgreSQL DB" as DB
+rectangle "Redis (Cache & Queue)" as REDIS
+rectangle "Workers" as W
+
+SPA -> API : REST/GraphQL
+API -> BS
+API -> SMS
+API -> RS
+BS -> DB
+BS -> REDIS : invalidate cache
+BS -> W : publish events
+SMS -> DB
+SMS -> REDIS : invalidate cache
+NS -> W
+RS -> DB
+W -> NS
+W -> RS
+@enduml

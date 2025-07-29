@@ -1,0 +1,19 @@
+= ADR-007: TLS & AES Encryption with Audit Logging
+
+== Context
+All data in transit and at rest involves personal and financial customer data, subject to GDPR and BaFin requirements. Traceability of data operations is mandatory.
+
+== Decision
+We will enforce TLS 1.2+ for all network communication and AES-256 encryption for all data at rest. An audit logging service will capture every create, update, and delete operation on PII, including user, timestamp, and record ID.
+
+== Consequences
+Positive:
+* Meets encryption and audit requirements for compliance.
+* Demonstrable traceability for audits.
+
+Negative:
+* Performance overhead for encryption and logging.
+* Additional storage for audit logs.
+
+Neutral:
+* Increases operational and security testing efforts.

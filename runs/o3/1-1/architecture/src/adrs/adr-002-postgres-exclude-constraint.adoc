@@ -1,0 +1,23 @@
+= ADR-002 Prevent Double-Booking with PostgreSQL EXCLUDE Constraint
+
+== Context
+
+A key quality goal is data integrity: the system must guarantee no overlapping appointments for the same barber. We need a server-side mechanism that works under concurrency and is easy to maintain.
+
+Alternatives evaluated:
+
+1. Application-level checks with optimistic locking.
+2. Redis-based distributed lock per staff/time.
+3. Database constraint using PostgreSQL `EXCLUDE` with `tstzrange` (plus SERIALIZABLE isolation).
+
+== Decision
+
+Implement an `EXCLUDE USING gist (staff_id WITH =, time_range WITH &&)` constraint on the `appointments` table (`time_range` is a `tstzrange`). Booking commands run in a SERIALIZABLE transaction.
+
+== Consequences
+
++ Single source of truth; database guarantees integrity regardless of application bugs.
++ Simple, declarative, easy to test.
++ Scales with horizontal API replicas (all share same DB).
+− Couples the solution to PostgreSQL (acceptable due to AC-01).
+− Slight overhead from GiST index maintenance (negligible for expected volume).

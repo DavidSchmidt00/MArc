@@ -1,0 +1,18 @@
+[[section-architecture-constraints]]
+== 2. Architecture Constraints
+
+|===
+| Category | Constraint | Motivation / Source
+
+| Regulatory | All production and DR workloads must reside in EU data centres. | GDPR, BaFin
+| Regulatory | Store audit logs for 10 years in immutable storage. | Compliance, ASR #6
+| Technology | Integration middleware shall be MuleSoft or Azure Integration Services. | IT Ops directive
+| Technology | Front-end stack shall be React + TypeScript. | Corporate UI standard
+| Technology | Programming language for back-end services is Kotlin (JDK 17). | Engineering guidelines
+| Technology | Messaging must use Kafka with CloudEvents. | Event governance, vendor-neutral format
+| Operations | Minimum 99.9 % monthly uptime; RTO 4 h, RPO 15 min. | ASR #8 & #19
+| Operations | CI/CD via Azure Pipelines & ArgoCD (GitOps). | DevOps standard
+| Data | Payload formats limited to JSON, XML, CSV; schemas versioned in registry. | Vendor lock-in mitigation
+| Data | Address writes to Billing system only within 00:00–02:00 CET batch window. | Legacy constraint
+| Security | Fine-grained RBAC; OIDC (Keycloak) for identity. | Security standard
+|===

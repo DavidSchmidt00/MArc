@@ -1,0 +1,22 @@
+= ADR-002 PostgreSQL Exclusion Constraint for Conflict-Free Booking
+:toc:
+
+== Status
+Accepted – 2024-06-26
+
+== Context
+Core business rule: no two appointments may overlap for the same barber.  Multiple concurrent booking requests can target the same slot.  Need an atomic guarantee enforced at persistence layer.
+Options considered:
+* Application-level locking using SELECT … FOR UPDATE.
+* Advisory locks keyed by barber & time range.
+* Database-level constraint (GiST exclusion constraint).
+
+== Decision
+We will enforce the rule using a PostgreSQL *GiST exclusion constraint* on `appointment (barber_id, tstzrange(start_ts, end_ts))`.  The application will retry up to 3 times on constraint violation and return HTTP 409 if still conflicting.
+
+== Consequences
++ Guarantee provided directly by the database → fewer race conditions.
++ Simple code: just an INSERT; errors handled uniformly.
++ Index assists slot-availability queries.
+− Couples data store choice to PostgreSQL specific feature (acceptable).
+− Write contention can cause retries under very high load (monitored via metric `slot_booking_conflict_total`).

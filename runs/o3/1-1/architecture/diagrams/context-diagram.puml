@@ -1,0 +1,21 @@
+@startuml
+skinparam packageStyle rectangle
+actor Customer
+actor Receptionist
+actor Barber
+actor Owner
+
+package "Prime-Cuts Booking System" {
+  [Web SPA]
+  [API Server]
+  database PostgreSQL
+}
+
+Customer --> [Web SPA] : Browse & Book
+Owner --> [Web SPA] : Admin UI
+Receptionist --> [Web SPA] : Desk UI
+Barber --> [Web SPA] : View Schedule
+
+[Web SPA] --> [API Server]
+[API Server] --> PostgreSQL
+@enduml

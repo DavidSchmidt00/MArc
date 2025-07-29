@@ -1,0 +1,33 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor black
+}
+
+package "Fork & Knife Platform" {
+  rectangle "API Gateway" as APIGW
+  rectangle "Customer Services" as CustSvc
+  rectangle "Restaurant Services" as RestSvc
+  rectangle "Logistics Services" as LogSvc
+  rectangle "Order Service" as OrderSvc
+  rectangle "Payment Service" as PaySvc
+  rectangle "Notification Service" as NotifSvc
+  rectangle "Identity Service" as IdnSvc
+  cloud "Kafka Event Backbone" as Kafka
+}
+
+APIGW --> CustSvc : REST/gRPC
+APIGW --> RestSvc : REST/gRPC
+APIGW --> LogSvc : REST/gRPC
+APIGW --> OrderSvc : REST/gRPC
+CustSvc --> Kafka : publish search events
+RestSvc --> Kafka : menu updates
+OrderSvc --> Kafka : order events
+LogSvc --> Kafka : driver location events
+OrderSvc --> PaySvc : gRPC (saga)
+OrderSvc --> LogSvc : gRPC (assign driver)
+PaySvc --> Kafka : payment events
+CustSvc --> IdnSvc : OAuth2
+RestSvc --> IdnSvc : OAuth2
+LogSvc --> IdnSvc : OAuth2
+@enduml

@@ -1,0 +1,31 @@
+= ADR-002: Introduce Dedicated Real-Time Gateway for WebSocket Traffic
+
+== Status
+Accepted – 2024-05-05
+
+== Context
+
+Customers and drivers require live updates (<2 s) for order statuses and GPS positions. While the API Gateway handles REST calls efficiently, long-lived WebSocket connections would exhaust its thread/connection pool and complicate scaling.  Mixing request/response and streaming traffic in one component prevents independent tuning.
+
+== Decision
+
+Add a stateless Real-Time Gateway alongside the API Gateway. It will:
+
+* Terminate secure WebSocket (wss) sessions.
+* Authenticate via short-lived JWT, then upgrade to WS session token.
+* Produce and consume events to/from Kafka topics (driver-location, order-status, chat-msg).
+* Scale horizontally based on active connections (HPA, target 5 000 conns/pod).
+* Use consistent-hash load-balancing to maintain session affinity.
+
+== Consequences
+
+Positive:
+
+* Independent scaling characteristic from REST workload.
+* Simplified connection management and back-pressure handling.
+* Reduced risk of DoS on REST pathways.
+
+Negative:
+
+* Extra operational component (build, deploy, monitor).
+* Requires duplication of auth/session logic separate from API Gateway.

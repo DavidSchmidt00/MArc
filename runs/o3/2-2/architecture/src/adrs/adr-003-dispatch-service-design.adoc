@@ -1,0 +1,63 @@
+= ADR-003: Dispatch / Logistics Service Detailed Design
+
+Date: 2024-05-05
+
+== Status
+Accepted
+
+== Context
+
+The platform orchestrates real-time assignment of delivery drivers to newly created food orders.
+Architecturally-Significant Requirements (ASRs) demand:
+
+* Driver match latency ≤ 15 s (P95) while supporting bursts of 10 k concurrent orders and 50 k active drivers.
+* Exactly-once semantics for assignment events that trigger downstream payment capture and order status transitions.
+* Privacy-compliant handling of driver location data and GDPR erase requests.
+* High availability (≥ 99.95 %), elasticity, and observability.
+
+== Decision
+
+Introduce a dedicated Dispatch / Logistics Service implemented as a **domain-partitioned, event-driven micro-service** with the following internal components (see Building Block 5.3.1):
+
+* **Location Ingestor** – consumes driver-location events and maintains geo-spatial index in Redis-Geo.
+* **Driver State Manager** – persists driver status (online/offline/capacity) in Postgres and publishes state changes.
+* **Matching Engine** – consumes `OrderCreated` events, performs geo-radius look-ups, scores drivers, and proposes matches.
+* **Job Offer Manager** – issues time-boxed job offers via Real-Time Gateway and tracks offer FSM in Redis Streams.
+* **Acceptance Processor** – atomically assigns the first accepting driver using Postgres + transactional outbox.
+* **Config Watcher** – hot-reloads matching rules broadcast via `ConfigChanged` events.
+* **Route Optimiser (plugin)** – optional ETA calculation via external routing API.
+
+Key technology choices:
+
+* Redis Cluster for low-latency geo-queries and distributed locks.
+* Debezium Outbox pattern for exactly-once `OrderAssigned` events on Kafka.
+* Short-lived JWT + per-message HMAC for authenticated GPS updates.
+* Privacy retention policy that hashes or deletes location archives after 30/180 days and supports GDPR erasure.
+* Escalation workflow with three retry attempts and deterministic cancel/refund path when no driver is found.
+
+== Consequences
+
+Positive:
+
+* Meets latency and scalability ASRs via in-memory geo-index and stateless matching engine.
+* Provides strong consistency for financially relevant assignments.
+* Resilient to partial failures (config store outage, Redis degradation) with safe defaults.
+* Privacy controls align with GDPR and internal security policies.
+
+Negative / Trade-offs:
+
+* Introduces Redis dependency and complexity around cluster management.
+* Additional Glue/Batch jobs for location-data retention increase operational overhead.
+* Escalation logic increases messaging volume in driver peak scenarios.
+
+== Alternatives Considered
+
+1. Use PostGIS queries instead of Redis-Geo – rejected due to higher latency under peak load.
+2. Centralised monolithic dispatch inside Ordering Service – rejected for scalability and team autonomy reasons.
+3. Off-the-shelf SaaS dispatch engine – rejected to keep core competency in-house and avoid per-order fees.
+
+== References
+
+* Dispatch component diagram – link:../diagrams/dispatch_components.svg[SVG]
+* ADR-001 – Microservice + Event-Driven Architecture
+* ADR-002 – Real-Time Gateway

@@ -1,0 +1,19 @@
+= ADR-004: API Gateway for External Exposure
+
+== Context
+All client applications (agent UI, support UI, marketing dashboards) require consistent authentication, authorization, routing, and observability.
+
+== Decision
+We will front all external and internal API calls with an API Gateway solution (e.g., Kong or Zuul). It will handle OAuth2 token validation, RBAC enforcement, rate-limiting, logging, and request routing to individual microservices.
+
+== Consequences
+Positive:
+* Single point for cross-cutting concerns.
+* Simplified client configuration and security.
+
+Negative:
+* Potential single point of failure (mitigated via HA).  
+* Extra network hop and processing.
+
+Neutral:
+* Encourages standardized API design.

@@ -1,0 +1,35 @@
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+=== Technical Constraints
+
+|===
+|Constraint|Rationale
+|Microservice architecture with database-per-service (ASR-C01)|Enables independent scaling & deployment; mandated by maintainability goal.
+|Primary cloud deployment on AWS (EKS, RDS, MSK)|Corporate cloud strategy and existing contracts.
+|Container orchestration via Kubernetes|Standard runtime chosen by infra team; multi-AZ support.
+|Service Mesh (Istio) with mTLS enforced|Zero-trust security baseline across services.
+|Event backbone: Apache Kafka (AWS MSK)|Meets throughput/latency requirements for real-time messaging.
+|Payments via Stripe & PayPal adapters|PCI-compliant providers approved by finance.
+|Mapping via Google Maps Platform|Most accurate routing/ETA data for target regions.
+|===
+
+=== Organizational Constraints
+
+|===
+|Constraint|Rationale
+|Three autonomous product squads (Customer, Restaurant, Logistics)|Team organisation already established.
+|Weekly production releases permitted on Thursdays only|Operations change-management window.
+|Infrastructure managed by central SRE team|Separation of concerns, cost governance.
+|===
+
+=== Conventions & Standards
+
+|===
+|Constraint|Rationale
+|Coding languages: Kotlin/JVM for backend, TypeScript for frontend/mobile (React Native)|Existing skillsets and code reuse.
+|API style: REST/JSON for external, gRPC/protobuf for internal|Consistency and performance.
+|Documentation standard: arc42 + ADRs|Company standard for architectural documentation.
+|IaC: Terraform + Helm charts|Align with SRE automation pipelines.
+|Observability: OpenTelemetry semantic conventions|Uniform metrics/tracing across services.
+|===

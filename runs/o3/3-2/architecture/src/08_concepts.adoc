@@ -1,0 +1,53 @@
+[[section-concepts]]
+== Cross-cutting Concepts
+
+This section describes concepts that are relevant across multiple building blocks of *InsureSphere CRM*.  They provide conceptual integrity, support the most important quality attributes, and give guidance for implementation and operations.
+
+=== Domain Concepts
+
+* *Customer 360 View* – the central aggregate that combines customer master-data, policies, claims, interactions, tasks, and marketing information.  Implemented via CQRS + Event Sourcing.  Canonical data model is published in the Schema Registry (Avro & JSON Schema) and versioned semantically.
+* *Policy* – external reference (mainframe) represented inside the CRM as a lightweight *PolicyReference* document that is kept in sync by integration events.
+* *Interaction* – every touchpoint (call, email, chat) is stored as an *Interaction* entity and linked to the Customer aggregate.
+
+A full glossary of domain terms is kept in the repository (`docs/glossary.md`).
+
+=== Security & Compliance Concepts
+
+* *Zero-Trust* network model inside the Kubernetes cluster – every service-to-service call is mutually authenticated by mTLS (Istio service mesh) and authorised via JWT scopes.
+* *Field-level RBAC* – enforced in the GraphQL BFF.  Claims inside the user’s OAuth token are mapped to GraphQL directives that allow/deny access down to field level.
+* *Data at Rest Encryption* – PostgreSQL TDE, Kafka at-rest encryption, Azure Blob Storage with server-side encryption (Microsoft-managed keys).
+* *Audit Trail* – immutable append-only event stream stored for ≥10 years on Azure Blob with WORM lock.  Events contain userId, correlationId, ipAddress for forensics.
+* *GDPR Data Residency* – all PII is processed and stored only in EU regions.  For the US-hosted Salesforce Marketing Cloud, customer identifiers are tokenised before export.  The token/key mapping resides only in EU Vault.
+
+=== Architectural & Design Patterns
+
+* *Hexagonal Architecture* – every microservice exposes **inbound ports** (REST, gRPC, GraphQL) and **outbound ports** (Kafka topics, REST clients).  Adapters implement protocol & technology specifics, promoting testability.
+* *CQRS + Event Sourcing* – write models persist commands in an Event Store; read models are projected into PostgreSQL/ElasticSearch for fast queries.
+* *Transactional Outbox + Debezium* – guarantees exactly-once delivery of events to Kafka.
+* *Saga / Process Manager* – Camunda 8 orchestrates long-running, distributed transactions with compensation.
+* *Anti-Corruption Layer* – MuleSoft/Azure Integration Services adapters translate between the CRM canonical model and legacy data formats (COBOL copybooks, EBCDIC, flat files).
+* *Strangler Fig* – legacy front-office applications are incrementally replaced.  API Gateway performs traffic steering based on feature flags.
+
+=== Integration Concepts
+
+* *Canonical Message Model* – JSON events using CloudEvents v1.0 envelope; payload schema in Avro.  Topics follow the convention `<domain>.<aggregate>.<eventName>.<version>`.
+* *Idempotency* – each command carries `x-idem-key` header (UUID v7).  Consumers store processed keys in a compacted Kafka topic for fast duplicate detection.
+* *Error Handling* – transient errors → exponential back-off & retry; business errors → `*.deadletter` topics; poison messages are surfaced on the Ops dashboard.
+
+=== Observability Concepts
+
+* *Structured Logging* (JSON) – every log line contains `traceId`, `spanId`, `correlationId`, `userId`.
+* *Distributed Tracing* – OpenTelemetry auto-instrumentation; spans exported to Jaeger.
+* *Metrics & SLOs* – Prometheus scrapes Micrometer metrics.  Grafana dashboards visualise SLIs (latency, throughput, error ratio).  Alertmanager notifies breaches within 1 min.
+
+=== Development Concepts
+
+* *GitOps* – Argo CD continuously reconciles the desired state from Git.  All environment promotions happen via Pull Requests and signed commits.
+* *CI Pipeline* – Azure Pipelines runs unit-, contract-, integration-, performance- and a11y-tests.  Quality-gates: >80 % code coverage, <3-click UX, WCAG 2.1 AA.
+* *Feature Flags* – Unleash service; flags are evaluated in BFF and UI enabling pilot roll-outs.
+
+=== Operational Concepts
+
+* *Blue/Green & Canary Deployments* – supported via Argo Rollouts and Istio traffic splitting.
+* *Backup & DR* – daily base-backups + continuous WAL shipping for Postgres; Kafka tiered storage; configuration and secrets backed up to Azure Backup Vault; automated quarterly DR drills.
+* *Capacity Management* – horizontal pod autoscaler based on custom metrics (CPU, request rate, lag).  Kafka partitions and consumer groups scale independently.

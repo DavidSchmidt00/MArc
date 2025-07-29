@@ -1,0 +1,25 @@
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+This section summarizes all relevant architectural constraints (nonfunctional requirements, technology restrictions, organizational requirements). These define the boundaries within which the architects must work.
+
+=== Nonfunctional Constraints
+* Scalability: Must handle rapid auto-scaling to support flash loads.
+* Real-time capabilities: Sub-2-second update latency.
+* High availability: Target of ≥99.9% uptime.
+* Security: TLS encryption, OAuth2/JWT auth, PCI DSS compliance for payment data.
+* Interoperability: Must integrate with external services like Stripe, Google Maps.
+* Maintainability: Services loosely coupled, independent CI/CD pipelines.
+* Observability: End-to-end tracing, centralized logs, real-time metrics/alerting.
+
+=== Technological Constraints
+* Containerization on Kubernetes.
+* Cloud infrastructure (AWS/GCP/Azure) with Terraform.
+* Primary databases: PostgreSQL, MongoDB; cache: Redis.
+* Messaging: Kafka (or RabbitMQ).
+* API Gateway: Kong/Envoy/NGINX.
+
+=== Organizational Constraints
+* Multiple independent teams for Customer, Restaurant, Order, Driver, Payment services.
+* Incremental delivery in 2-week sprints.
+* Must leverage existing corporate identity provider for SSO.

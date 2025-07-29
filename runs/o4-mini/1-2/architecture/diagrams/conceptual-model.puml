@@ -1,0 +1,35 @@
+@startuml
+class Customer {
+  +id: UUID
+  +name: String
+  +email: String
+  +phone: String
+}
+class Staff {
+  +id: UUID
+  +name: String
+  +workingHours: Map<DayOfWeek, TimeRange>
+}
+class Service {
+  +id: UUID
+  +name: String
+  +duration: Duration
+  +price: Decimal
+}
+class Booking {
+  +id: UUID
+  +datetime: DateTime
+  +status: Enum { Scheduled, Cancelled, Completed }
+  +notes: String
+}
+class Notification {
+  +id: UUID
+  +type: Enum { Confirmation, Reminder }
+  +medium: Enum { Email, SMS }
+  +status: Enum { Pending, Sent, Failed }
+}
+Customer "1" -- "*" Booking
+Staff "1" -- "*" Booking
+Service "1" -- "*" Booking
+Booking "1" -- "*" Notification
+@enduml

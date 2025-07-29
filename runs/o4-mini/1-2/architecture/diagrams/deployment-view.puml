@@ -1,0 +1,15 @@
+@startuml
+node "Client Browser" as Client
+node "Load Balancer" as LB
+node "App Server Cluster" as App
+database "PostgreSQL DB" as DB
+node "Redis Cache & Queue" as REDIS
+node "Worker Nodes" as Workers
+
+Client --> LB : HTTPS
+LB --> App : HTTPS
+App --> DB : JDBC/SQL
+App --> REDIS : Cache & Job Queue
+Workers --> REDIS : Dequeue Jobs
+Workers --> DB : Read/Write
+@enduml

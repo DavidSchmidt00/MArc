@@ -1,0 +1,26 @@
+@startuml
+participant "SPA Frontend" as SPA
+participant "API Layer" as API
+participant "Booking Service" as BS
+participant "Database" as DB
+participant "Redis Cache" as REDIS
+participant "Worker Queue" as WQ
+participant "Notification Worker" as NW
+SPA -> API : POST /bookings
+activate API
+API -> BS : createBooking()
+activate BS
+BS -> DB : BEGIN TRANSACTION
+BS -> DB : INSERT booking
+BS -> DB : COMMIT
+BS -> REDIS : invalidate availability cache
+BS -> WQ : enqueue BookingCreated event
+deactivate BS
+API -> SPA : HTTP 201 Created
+deactivate API
+
+WQ -> NW : deliver BookingCreated event
+activate NW
+NW -> "Email/SMS Gateway" : send notifications
+deactivate NW
+@enduml

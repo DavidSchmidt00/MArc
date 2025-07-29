@@ -1,0 +1,27 @@
+= ADR-002: SPA Frontend Architecture
+
+== Context
+
+The Prime-Cuts Booking system requires a user interface for both customers and staff. Key considerations:
+
+* Majority of customers will use mobile devices for booking.
+* Booking and schedule flows must be completed in as few clicks as possible.
+* UI changes and feature additions expected over time.
+
+== Decision
+
+We will implement the frontend as a Single-Page Application (SPA) using either React or Vue.js. The SPA will be responsive and mobile-first.
+
+== Consequences
+
+Positive:
+* Rich, interactive user experience with minimal page reloads.
+* Easier to achieve a mobile-first design and pass Lighthouse responsiveness audits.
+* Single codebase for web and potential PWA.
+
+Negative:
+* Increased complexity in initial setup (build chain, client-side routing).
+* SEO considerations require SSR or prerendering for public pages.
+
+Neutral:
+* Requires additional client-side state management (Redux or Vuex).

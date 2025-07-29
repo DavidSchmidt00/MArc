@@ -1,0 +1,20 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+=== Business Context
+The "Fork & Knife" platform aims to undercut high commission rates of existing food delivery services by offering a transparent fee structure, benefiting local restaurants. The platform facilitates: 1) Customers browsing and ordering food; 2) Restaurants managing menus and orders; 3) Drivers delivering orders; 4) Platform admins overseeing operations.
+
+=== System Context Diagram
+image::diagrams/forkknife_context.svg[System Context Diagram]
+
+=== In Scope
+* Customer Web and Mobile apps.
+* Restaurant Web portal.
+* Driver Mobile app.
+* API Gateway and Backend microservices: Auth, Customer, Restaurant, Order, Driver, Payment, Notification, Routing.
+* Integration with third-party services: Payment Gateway (Stripe), Mapping (Google Maps).
+
+=== Out of Scope
+* In-house payment gateway development (uses third-party).
+* Desktop applications for drivers or restaurants.
+* Marketing website and campaign management.

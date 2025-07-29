@@ -1,0 +1,13 @@
+= 4. Solution Strategy
+
+This section summarises the fundamental design decisions that shape the Fork & Knife architecture.
+
+* Microservice + Event-Driven Architecture (ADR-001) – aligns with scalability, real-time and team autonomy goals.
+* Dedicated Real-Time Gateway (ADR-002) – isolates WebSocket streaming traffic and guarantees <2 s event propagation.
+* Domain-Driven service decomposition: Identity, Menu, Ordering, Payment, Dispatch, Driver Management, Notification, Ratings, Reporting.
+* Polyglot persistence – each service owns its datastore (Postgres, MongoDB, Redis-Geo, object storage).
+* Kafka as central asynchronous backbone; Avro schemas with Schema Registry and backward compatibility rules.
+* API Gateway + role-specific BFFs – secure ingress, protocol translation and UI-oriented payload shaping.
+* Cloud-native deployment on Kubernetes with managed stateful services; cross-region disaster recovery (RPO ≤ 5 min / RTO ≤ 30 min).
+* Security: OAuth 2.0/OIDC, mTLS internally, isolated PCI network segment for Payment service.
+* Observability: OpenTelemetry, Prometheus/Grafana dashboards, alerting on SLO breach.

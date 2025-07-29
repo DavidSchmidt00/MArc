@@ -1,0 +1,35 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+=== Requirements Overview
+This document captures the key functional and quality requirements driving the Prime-Cuts Booking system. The application allows customers to view availability, book, reschedule and cancel barber appointments via a responsive single-page web interface. Staff and owners manage services, working hours, staff schedules, and view reports. Core requirements include:
+* Appointment CRUD with conflict prevention (FR-ASR-01)
+* Real-time availability queries under 2 s (FR-ASR-02)
+* Flexible staff calendar management (FR-ASR-03)
+* Profile management and history lookup (FR-ASR-04)
+* Notification integration (email/SMS confirmations and reminders) (FR-ASR-05)
+* Reporting and analytics (daily/weekly/monthly) (FR-ASR-06)
+
+=== Quality Goals
+The following quality goals have the highest priority for the architecture:
+[cols="1,3,3,2",options="header"]
+|===
+| ID | Quality Goal | Scenario | Priority
+| QA-01 | Reliability & Availability | System uptime ≥ 99.9%, ACID transactions, automated backups | High
+| QA-02 | Performance & Scalability | API P95 latency ≤ 2 s under peak load, horizontal scale of stateless services | High
+| QA-03 | Security & Privacy | All traffic over TLS, data encrypted at rest, RBAC controls, GDPR compliance | High
+| QA-04 | Usability & Responsiveness | Mobile-first SPA, booking flows in ≤ 3 clicks | Medium
+| QA-05 | Maintainability & Extensibility | Modular layered design, clear separation of concerns, easy addition of new features (e.g. payments) | Medium
+|===
+
+=== Stakeholders
+Stakeholders who influence the architecture and consume its documentation:
+[cols="1,2,3",options="header"]
+|===
+| Role | Description | Expectations
+| Customer | End user booking appointments | Fast, intuitive booking; email/SMS confirmations; mobile-friendly UI
+| Barber | Staff member checking schedule and notes | Accurate availability view; personal schedule blocks; simple calendar UI
+| Receptionist | Staff booking on behalf of customers | Quick search and booking; view customer history
+| Barbershop Owner | Administrator managing services, staff, reports | Easy service/staff config; reliable reports; minimal operation overhead
+| DevOps | Team deploying and operating system | Clear deployment model; monitoring/alerting; backup strategy
+|===

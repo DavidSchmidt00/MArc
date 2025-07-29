@@ -1,0 +1,21 @@
+@startuml
+actor Customer
+participant "SPA" as SPA
+participant "API Gateway" as API
+participant "Booking Service" as Service
+participant "PostgreSQL" as DB
+participant "SQS" as Queue
+
+Customer -> SPA: Select slot & click Book
+SPA -> API: POST /appointments
+API -> Service: ReserveSlotCmd
+activate Service
+Service -> DB: BEGIN TX (SERIALIZABLE)
+Service -> DB: INSERT appointment
+DB --> Service: OK / ConstraintViolation
+Service -> DB: COMMIT
+Service -> Queue: Publish BookingConfirmed
+deactivate Service
+API --> SPA: 201 Created (appointment id)
+SPA --> Customer: Show confirmation
+@enduml

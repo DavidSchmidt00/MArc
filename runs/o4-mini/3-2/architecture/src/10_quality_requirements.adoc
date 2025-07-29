@@ -1,0 +1,45 @@
+[[section-quality-scenarios]]
+== Quality Requirements
+
+These quality requirements refine the top-level quality goals defined in Section 1.2 into concrete, measurable scenarios.
+
+=== Quality Tree
+
+* Integration & Interoperability
+  * ASR-INT-001: Central ESB for legacy integration (95% success ≤1s)
+  * ASR-INT-002: Anti-Corruption Layer for model isolation
+* Data Consistency & Integrity
+  * ASR-DATA-001: Eventual consistency (≤5min SLA)
+* Security & Compliance
+  * ASR-SEC-001: TLS 1.2+, AES-256 at rest, 100% audit logging
+  * ASR-SEC-002: OAuth2/OIDC + RBAC, no privilege escalation
+* Reliability & Availability
+  * ASR-AVAIL-001: 99.9% uptime, RTO ≤4h, active–active
+* Performance & Scalability
+  * ASR-PERF-001: Dashboard ≤2s under 2,000 users (95th pct)
+  * ASR-SCAL-001: Scale to 6,000 concurrent users via auto-scaling
+* Usability
+  * ASR-USAB-001: SUS ≥80, component-based UI
+* Data Migration & Manageability
+  * ASR-DATA-MIG-001: 99% legacy record mapping, idempotent ETL
+* Observability & Operations
+  * ASR-MON-001: Alerts <1min on SLA breach or errors
+* Compliance Reporting
+  * ASR-COMPLIANCE-001: Automated GDPR/BaFin report generation
+
+=== Quality Scenarios
+
+[options="header",cols="1,1,1,1,1"]
+|===
+|ID|Stimulus|Environment|Artifact|Response & Measure
+|QS-INT-001|Agent searches customer|Peak load (2,000 users)|API Gateway + Customer Service|95th pct response ≤1s
+|QS-DATA-001|Address update performed|Normal operation|Kafka event pipeline|Propagation to all systems ≤5min (99%)
+|QS-SEC-001|Unauthorized API call|Production|API Gateway|Reject with 401, log attempt, no data exposure
+|QS-AVAIL-001|DC outage|Simulated failure|Kubernetes cluster|Failover completes ≤4h, <1% request loss
+|QS-PERF-001|Dashboard load|2,000 concurrent users|Frontend + backend|95th pct load time ≤2s
+|QS-SCAL-001|Spike to 6,000 users|Cloud environment|Microservices|Auto-scale adds pods, maintains throughput
+|QS-USAB-001|Usability test|Users unfamiliar|SPA UI|SUS score ≥80
+|QS-DATA-MIG-001|Run migration pipeline|Initial rollout|ETL jobs|99% records loaded, no duplicates
+|QS-MON-001|Service error surge|Production|Monitoring stack|Alert sent <1min, incident ticket created
+|QS-COMP-001|Regulatory audit request|Ad-hoc|Compliance reports|Reports generated in <15min
+|===

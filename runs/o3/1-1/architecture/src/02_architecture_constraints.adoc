@@ -1,0 +1,14 @@
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+|===
+|ID |Type |Description |Source
+|AC-01 |Technical |Primary datastore must be PostgreSQL (managed). |Cost & open-source preference.
+|AC-02 |Technical |Application server stack based on Node.js (TypeScript). |Existing dev team expertise.
+|AC-03 |Technical |Front-end implemented as SPA with React or Vue. |Developer preference, re-use of component library.
+|AC-04 |Technical |Infrastructure shall use managed PaaS / serverless offerings (Heroku, AWS Lambda, RDS, SQS). |“Simple & cheap” non-functional goal.
+|AC-05 |Organisational |No in-house Ops team; 24×7 on-call must be avoided. |Company policy.
+|AC-06 |Regulatory |Must comply with GDPR for EU customers. |Legal.
+|AC-07 |Convention |Architecture documentation must follow arc42 and ADR format. |Internal standard.
+|AC-08 |Convention |Code must pass ESLint/Prettier and use conventional-commits. |Dev team agreement.
+|===

@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Deployment>
+actor Customer
+participant "API Gateway" as Gateway
+participant "Auth & Identity Service" as Auth
+participant "Order Service" as OrderS
+participant "Payment Service" as Payment
+participant "Kafka/EventBus" as EventBus
+participant "Notification Service" as Notify
+
+Customer -> Gateway: POST /orders
+Gateway -> Auth: Validate JWT
+Auth --> Gateway: JWT valid
+Gateway -> OrderS: createOrder()
+OrderS -> Payment: authorizePayment()
+Payment --> OrderS: paymentConfirmed
+OrderS -> OrderS: persist(order)
+OrderS -> EventBus: publish(OrderCreated)
+EventBus -> Notify: consume(OrderCreated)
+Notify -> Customer: push(Order Created)
+@enduml

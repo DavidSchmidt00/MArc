@@ -1,0 +1,42 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+The solution follows a cloud-native, microservice architecture to satisfy the key drivers of scalability, real-time responsiveness, high availability, and independent team delivery.
+
+=== Architectural Pattern & Decomposition
+
+* Microservices per bounded context (Customer, Restaurant, Logistics) with database-per-service to enable autonomous evolution.
+* Event-driven architecture with Apache Kafka for loose-coupling and near real-time asynchronous communication.
+* CQRS for write-heavy menu/order flows, separating update and query models for optimal performance.
+* Saga pattern to coordinate distributed transactions across Order, Payment, and Dispatch services.
+* API Gateway façade (REST/GraphQL + WebSockets) provides a unified, secure edge for all client applications.
+
+=== Technology Decisions
+
+|Technology|Purpose|Motivation
+|Kubernetes (EKS)|Container orchestration|Scales horizontally, multi-AZ HA, aligns with corporate infra.
+|Istio Service Mesh|Traffic management, mTLS|Zero-trust security, retries, circuit breaking.
+|Apache Kafka (MSK)|Event backbone|High throughput & low latency for order/driver events.
+|PostgreSQL (Aurora)|Transactional data|ACID compliance for financial & order state.
+|MongoDB / DynamoDB|Document data|Flexible menu catalogue & location snapshots.
+|Redis Cluster|Caching & sessions|Millisecond read latency for menus, search, carts.
+|Stripe / PayPal SDKs|Payments|PCI-compliant providers already approved.
+|OpenTelemetry Stack|Observability|Unified metrics, logs, traces.
+
+=== Quality Goal Realisation
+
+*Scalability* – Stateless service replicas, auto-scaling, sharded databases, Kafka partitions.
+
+*Real-time* – WebSockets for push; Kafka + low-latency stores; SLA ≤2 s.
+
+*Availability* – Multi-AZ deployments, health probes, automated failover, graceful degradation.
+
+*Security & Compliance* – mTLS inside mesh, JWT/OIDC outside, Vault secrets, PCI scope isolation.
+
+*Maintainability* – Clear service ownership, CI/CD per repo, infrastructure-as-code, ADRs.
+
+=== Organisational Decisions
+
+* Three product squads own their bounded contexts; shared platform services are maintained by the SRE guild.
+* Release cadence: weekly production push (Thursday window) with progressive delivery (canary / feature flags).
+* Documentation standard: arc42 template + Architecture Decision Records stored in Git.

@@ -1,0 +1,12 @@
+= ADR-007 Data Residency & Tokenisation
+
+== Context
+GDPR and BaFin require EU data residency.  Salesforce Marketing Cloud operates in the US and needs customer information for campaigns.
+
+== Decision
+All primary and DR environments run exclusively in EU regions.  Before data leaves the EU, PII attributes are tokenised via HashiCorp Vault Transit.  Only tokens are sent to Salesforce; mapping tables stay EU-only.
+
+== Consequences
+* ✅  Compliance with GDPR data-residency rules.
+* ✅  Marketing integration proceeds without exposing raw PII.
+* ⚠  Additional indirection when troubleshooting campaign data.

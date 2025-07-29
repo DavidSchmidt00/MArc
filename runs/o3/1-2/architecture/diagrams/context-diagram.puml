@@ -1,0 +1,27 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #f0f0f0
+  BorderColor black
+}
+actor Customer
+actor Receptionist
+actor Barber
+actor Owner
+node "React SPA" as SPA
+node "Node.js Backend" as Backend
+database PostgreSQL
+queue RabbitMQ
+cloud "SendGrid EU" as SendGrid
+cloud "Twilio EU / Vonage EU" as SMS
+cloud Redis
+Customer --> SPA : Book / Manage
+Receptionist --> SPA : Book for walk-ins
+Barber --> SPA : View schedule
+Owner --> SPA : Admin & reports
+SPA --> Backend : REST (HTTPS)
+Backend --> PostgreSQL : ACID tx
+Backend --> RabbitMQ : events
+Backend --> SendGrid : email API
+Backend --> SMS : sms API
+Backend --> Redis : cache
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+!include <C4/C4_Deployment>
+
+DeploymentNode("Internet") {
+  DeploymentNode("Load Balancer", "Cloud LB", "TLS termination")
+}
+
+DeploymentNode("Kubernetes Cluster", "AWS/EKS - Multi AZ") {
+  DeploymentNode("API Gateway Pod", "Container", "Envoy/Kong") {
+    ContainerInstance(gw1, "API Gateway Instance 1")
+    ContainerInstance(gw2, "API Gateway Instance 2")
+  }
+  DeploymentNode("Microservices Namespace") {
+    ContainerInstance(cs, "Customer Service")
+    ContainerInstance(rs, "Restaurant Service")
+    ContainerInstance(os, "Order Service")
+    ContainerInstance(ds, "Driver Service")
+    ContainerInstance(ps, "Payment Service")
+    ContainerInstance(ns2, "Notification Service")
+    ContainerInstance(map, "Mapping & Routing")
+  }
+  DeploymentNode("Databases") {
+    DeploymentNode("PostgreSQL Cluster", "PostgreSQL", "Primary + Replicas")
+    DeploymentNode("MongoDB Replica Set", "MongoDB")
+    DeploymentNode("Redis Cluster", "Redis")
+    DeploymentNode("Kafka Cluster", "Kafka")
+  }
+}
+
+DeploymentNode("Third-Party Services") {
+  System_Ext(stripe, "Stripe API", "Payment Gateway")
+  System_Ext(googlemaps, "Google Maps API", "Geo & Routing Services")
+}
+
+LoadBalancer -> gw1
+LoadBalancer -> gw2
+gw1 --> cs
+gw1 --> rs
+gw1 --> os
+gw1 --> ds
+gw1 --> ps
+gw1 --> ns2
+gw1 --> map
+os --> "PostgreSQL Cluster"
+ps --> "PostgreSQL Cluster"
+cs --> "MongoDB Replica Set"
+rs --> "MongoDB Replica Set"
+ds --> "MongoDB Replica Set"
+cs --> "Redis Cluster"
+rs --> "Redis Cluster"
+ds --> "Redis Cluster"
+os --> "Kafka Cluster"
+rs --> "Kafka Cluster"
+ds --> "Kafka Cluster"
+"Mapping & Routing" --> googlemaps
+ps --> stripe
+@enduml

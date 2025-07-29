@@ -1,0 +1,27 @@
+[[section-design-decisions]]
+== Architecture Decisions
+
+The project maintains Architecture Decision Records (ADRs) in `architectures/src/adrs/`.
+
+|===
+| ADR | Title | Status | Date
+
+| xref:adrs/adr-001-microservices-event-driven.adoc[ADR-001]
+| Adopt Microservice + Event-Driven Architecture
+| Accepted
+| 2024-05-05
+
+| xref:adrs/adr-002-real-time-gateway.adoc[ADR-002]
+| Introduce Dedicated Real-Time Gateway for WebSocket Traffic
+| Accepted
+| 2024-05-05
+
+| xref:adrs/adr-003-dispatch-service-design.adoc[ADR-003]
+| Dispatch / Logistics Service Detailed Design
+| Accepted
+| 2024-05-05
+|===
+
+Earlier records or templates:
+
+* xref:adrs/adr-000-template.adoc[ADR-000 Template]

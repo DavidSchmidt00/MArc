@@ -1,0 +1,23 @@
+@startuml
+!define ICONURL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.1.0
+
+package "Menu Service" {
+  [Menu Cmd API] as cmd
+  [Command Processor] as cp
+  [Outbox Publisher] as outbox
+  [Snapshot Builder] as snapshot
+  [Menu Query API] as query
+  database "Write Store\n(PostgreSQL)" as write_db
+  database "Redis Catalogue\nCache" as redis
+  storage "S3 Snapshot Store" as s3
+}
+
+cmd --> cp
+cp --> write_db
+cp --> outbox
+snapshot --> redis
+snapshot --> s3
+outbox --> snapshot : Kafka "menu-updates"
+query --> redis
+query --> s3 : fallback
+@enduml

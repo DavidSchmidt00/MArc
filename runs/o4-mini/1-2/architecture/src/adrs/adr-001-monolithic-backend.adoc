@@ -1,0 +1,28 @@
+= ADR-001: Monolithic Backend Architecture
+
+== Context
+
+The team needs to choose a backend architecture for the Prime-Cuts Booking system. Key factors:
+
+* Small team with limited resources and expertise.
+* Scheduling operations require ACID transactions to prevent double bookings.
+* Initial release scope excludes microservice-scale complexity.
+* Deployment must be straightforward (single artifact).
+
+== Decision
+
+We will implement the backend as a monolithic application using Node.js/Express or Python/Django. All business logic, API endpoints, and data persistence reside in a single deployable artifact.
+
+== Consequences
+
+Positive:
+* Simplified development and deployment pipeline.
+* Easier local development and debugging.
+* Single codebase for all domain logic and data access.
+
+Negative:
+* Potential for large codebase if not modularized properly.
+* Scalability is coarse-grained (entire monolith vs. individual services).
+
+Neutral:
+* A well-modularized monolith can later be split if needed.

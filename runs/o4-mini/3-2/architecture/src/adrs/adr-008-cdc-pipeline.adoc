@@ -1,0 +1,19 @@
+= ADR-008: Change Data Capture (CDC) Pipeline
+
+== Context
+Legacy databases do not provide APIs for near-real-time data access. Batch updates introduce delays that break the data consistency SLA (≤5min).
+
+== Decision
+We will deploy CDC connectors (e.g., Debezium) on legacy databases to stream change events to Kafka. Microservices subscribe to relevant topics to update their local data stores.
+
+== Consequences
+Positive:
+* Ensures near-real-time data sync.
+* Avoids direct scheduling of batch jobs.
+
+Negative:
+* Operational overhead of running CDC connectors.
+* Management of connector offsets and backpressure.
+
+Neutral:
+* Requires careful schema change management.

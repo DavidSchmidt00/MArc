@@ -1,0 +1,20 @@
+= ADR-010: Centralized Monitoring & Observability
+
+== Context
+A distributed, event-driven microservices architecture requires robust monitoring, logging, and tracing to detect and diagnose issues quickly, especially under strict SLA requirements.
+
+== Decision
+We will consolidate metrics in Prometheus, logs in an ELK (Elasticsearch, Logstash, Kibana) stack, and distributed tracing in Jaeger. All services, ESB connectors, and ACL components will emit standardized metrics, logs, and trace spans.
+
+== Consequences
+Positive:
+* Comprehensive visibility into system behavior and performance.
+* Faster root-cause analysis.
+* Automated alerts on SLA violations, error rates, and security incidents.
+
+Negative:
+* Operational overhead of managing multiple observability systems.
+* Increased storage and resource usage for logs and traces.
+
+Neutral:
+* Necessitates consistent instrumentation across teams.

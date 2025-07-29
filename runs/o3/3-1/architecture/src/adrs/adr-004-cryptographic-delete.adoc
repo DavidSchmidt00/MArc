@@ -1,0 +1,14 @@
+= ADR-004 Cryptographic Delete for GDPR Right-to-Erasure
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+GDPR Article 17 requires complete removal of personal data upon request. The CRM keeps an immutable audit log in Kafka for 10 years; physical deletion is undesirable.
+
+== Decision
+Encrypt all PII fields with a per-customer Data Encryption Key (DEK). Store DEKs in HashiCorp Vault Transit engine. To erase data, destroy the DEK in Vault (cryptographic deletion). Events remain but are undecipherable.
+
+== Consequences
+* Meets GDPR erasure without breaking audit trails.
+* Requires envelope encryption and careful key-management.
+* Audit of key destruction events must itself be immutable (see follow-up).

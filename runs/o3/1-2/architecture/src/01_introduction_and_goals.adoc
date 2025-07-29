@@ -1,0 +1,25 @@
+= 1. Introduction and Goals
+:toc:
+
+== Requirements Overview
+Prime-Cuts Booking is a web-based system that enables customers to self-book haircut appointments while giving the barbershop owner and staff an easy interface to manage schedules, services and reports.  The application replaces the current telephone/ paper process, eliminating double-booking and giving 24×7 self-service capability.
+
+== Stakeholders
+|===
+|Role | Motivation / Expectation
+|Owner | Maintain service catalogue, staff schedules, view reports, run the business more efficiently.
+|Barber | See daily schedule, block personal time, read customer notes.
+|Receptionist | Book walk-ins or phone requests quickly.
+|Customer | Find available slots, book, reschedule or cancel in a few clicks, receive confirmations and reminders.
+|===
+
+== Goals
+* Easy to use on mobile and desktop (≤3 taps to book).
+* Conflict-free, reliable booking available 24×7 (≥99.5 % uptime).
+* Low cost for a small business; leverage managed PaaS offerings.
+* Secure handling of personal data (HTTPS-only, EU data-residency, GDPR compliance).
+* Evolvable toward future payment integration without major refactor.
+
+== Non-Goals
+* Online payments (future phase).
+* Loyalty points, marketing campaigns, multi-location support.

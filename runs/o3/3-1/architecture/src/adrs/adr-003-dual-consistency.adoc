@@ -1,0 +1,17 @@
+= ADR-003 Dual Consistency Model (LRA-2PC + Outbox/Saga)
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+Data Consistency & Integrity (ASR #2) demand that certain fields (address, policy status, payment status) are *strongly* consistent across CRM and legacy systems, while other operations may tolerate eventual consistency for scalability.
+
+== Decision
+Implement a **dual consistency model**:
+
+1. *Strong Consistency* – For critical fields, use a Long-Running Action (LRA) / 2-Phase Commit coordinator (Narayana) that spans CRM PostgreSQL and IBM MQ endpoints.
+2. *Eventual Consistency* – For non-critical operations, use the Transactional Outbox pattern to emit domain events into Kafka and coordinate with Saga orchestrators.
+
+== Consequences
+* Balances performance with legal obligation for accurate customer data.
+* Complexity introduced by XA-like coordination is limited to a small subset of transactions.
+* UI must surface potential delay indicators for eventually consistent updates.

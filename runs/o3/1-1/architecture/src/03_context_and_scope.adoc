@@ -1,0 +1,32 @@
+[[section-context-and-scope]]
+== Context and Scope
+
+This chapter positions the Prime-Cuts Booking System within its environment and shows all communication partners.
+
+=== Business Context
+
+.Prime-Cuts Booking – Business Context
+image::diagrams/context-diagram.svg[align="center",width="600"]
+
+|===
+|Partner |Input to System |Output from System
+|Customer |Desired service, preferred barber, selected time slot, contact details |Confirmation e-mail/SMS, reminder, booking history.
+|Receptionist |Walk-in/phone booking data, cancellations |Booking confirmation (screen), schedule overview.
+|Barber |Break blocks, view schedule |Schedule display.
+|Owner |Service catalog updates, staff data, working hours |Reports, schedule overview.
+|SendGrid |— |SMTP/API calls – e-mail confirmations & reminders.
+|Twilio |— |REST API calls – SMS confirmations & reminders.
+|===
+
+=== Technical Context
+
+|===
+|Channel / Technology |Direction |Purpose |Notes
+|HTTPS (REST/JSON) |Bi-directional |Browser ↔︎ API Server |TLS 1.2+, CORS restricted.
+|HTTPS (Static assets) |Server → Browser |Delivery of SPA bundle |Hosted on Vercel/Netlify CDN.
+|JDBC (TLS) |API Server ↔︎ PostgreSQL |Transactional data access |Managed RDS, encrypted at rest.
+|Redis TCP (TLS) |API Server ↔︎ Redis Cache |Slot availability cache, pub/sub invalidation |Clustered.
+|HTTPS (SendGrid API) |API/Worker → SendGrid |Send confirmation and reminder e-mails |API key secret.
+|HTTPS (Twilio API) |API/Worker → Twilio |Send SMS confirmations & reminders |Auth token secret.
+|SQS (HTTPS + long-poll) |API/Worker ↔︎ AWS SQS |Asynchronous event queue |DLQ configured.
+|===

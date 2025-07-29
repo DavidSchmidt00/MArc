@@ -1,0 +1,56 @@
+[[section-solution-strategy]]
+== Solution Strategy
+
+This section summarises the fundamental, *approved* decisions that shape the architecture of **InsureSphere CRM**. Each entry is backed by a dedicated Architecture Decision Record (ADR).
+
+|===
+|Area | Decision | Rationale | ADR
+
+| Architectural style
+| Adopt a domain-driven, service-oriented, event-driven micro-service architecture with hexagonal (ports-and-adapters) pattern; apply *Strangler Fig* for phased legacy replacement.
+| Enables independent evolution, clear bounded contexts, and risk-free migration of legacy front-office functions. 
+| xref:adrs/adr-001-architectural-style.adoc[ADR-001]
+
+| Integration & Interoperability
+| Use a central Integration Platform (MuleSoft Runtime Fabric – primary; Azure Integration Services – fallback) as Enterprise Service Bus plus Anti-Corruption Layer (ACL) adapters for every legacy system.
+| Simplifies protocol conversion (MQ ↔ Kafka, batch, CDC) and isolates the domain model from legacy inconsistencies.
+| ADR-002
+
+| Communication paradigm
+| Async events over *Confluent Kafka* for all cross-service interactions; *REST/GraphQL* for synchronous queries.
+| Guarantees loose coupling, horizontal scalability, and natural audit trail of business events.
+| ADR-003
+
+| Consistency guarantees
+| Implement *Transactional Outbox* + *Debezium* CDC for exactly-once event publishing; prefix all commands with global _Idempotency-Key_.
+| Satisfies the ≤5 min propagation ASR and prevents duplicates across batch integrations.
+| ADR-004
+
+| State management
+| Apply *CQRS + Event Sourcing* in Customer and Task contexts, ordinary CRUD elsewhere.
+| Provides full auditability (10-year retention) and cheap materialised views for performant dashboard queries.
+| ADR-005
+
+| Long-running transactions
+| Model complex workflows (Address change, FNOL) as *Sagas* orchestrated by *Camunda 8*.
+| Ensures reliable compensation across heterogeneous legacy endpoints and visibility for Ops.
+| ADR-006
+
+| Data residency & compliance
+| All production data stored in EU regions; PII leaving EU (to Salesforce Marketing Cloud) is tokenised via Vault Transit.
+| Satisfies GDPR and BaFin residency requirements while enabling marketing automation use-cases.
+| ADR-007
+
+| Observability & SLA monitoring
+| Uniform Micrometer metrics → Prometheus → Grafana; Alertmanager routes violations within 1 minute.
+| Meets ASR #13 (audit & monitoring) and allows objective quality-gate automation.
+| ADR-008
+
+| Disaster Recovery
+| Active–passive topology (Azure West EU ⟷ North EU) with ≤4 h RTO / 15 min RPO; quarterly chaos tests.
+| Essential for the 99.9 % availability target and regulatory DR evidence.
+| ADR-009
+
+|===
+
+These cornerstones are elaborated in the subsequent architecture views.

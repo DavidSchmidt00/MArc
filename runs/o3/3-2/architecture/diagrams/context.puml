@@ -1,0 +1,23 @@
+@startuml
+!define AWSPUML https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AWSPUML
+actor "Insurance Agent" as Agent
+actor "Customer Support" as Support
+node "InsureSphere CRM" as CRM
+node "Integration Platform (ESB)" as ESB
+frame "Legacy Systems" {
+  database "Policy Mainframe" as Mainframe
+  database "Claims (Java)" as Claims
+  database "Billing (AS/400)" as Billing
+  database "Data Warehouse (Teradata)" as DWH
+}
+cloud "Salesforce Marketing Cloud" as SFMC
+Agent --> CRM
+Support --> CRM
+CRM --> ESB
+ESB --> Mainframe
+ESB --> Claims
+ESB --> Billing
+ESB --> DWH
+CRM --> SFMC : tokenized segments
+SFMC --> CRM : campaign results (token IDs)
+@enduml

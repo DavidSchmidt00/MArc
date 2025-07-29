@@ -1,0 +1,34 @@
+= 8. Cross-cutting Concepts
+:toc:
+
+== Security
+* JWT-based stateless auth, roles: CUSTOMER, BARBER, OWNER.
+* HTTPS enforced via HSTS; no mixed content.
+* PII columns (`email`, `phone`) encrypted with pgcrypto.
+* Secrets stored in PaaS config vars / AWS Secrets Manager.
+
+== Persistence
+* Single PostgreSQL schema.
+* `appointment` table has GiST exclusion constraint to prevent overlaps.
+* Outbox pattern for reliable event publication.
+
+== Error Handling
+* Domain errors → HTTP 4xx.
+* Infrastructure errors → HTTP 5xx + log with request_id.
+* Booking conflicts return 409.
+
+== Logging & Monitoring
+* JSON logs with request_id, user_id.
+* Prometheus metrics exposed at `/metrics`.
+* Alerts: uptime, queue depth, booking conflict ratio.
+
+== Configuration
+* Twelve-Factor App: environment variables, no config files checked in.
+
+== Test Strategy
+* Unit tests (Jest) for domain logic – ≥80 % coverage, enforced in CI.
+* Integration tests with postgres-testcontainer.
+* Load tests (Artillery) executed in CI nightly.
+
+== Internationalisation
+* Single locale (en-GB) initially. Time-zone stored and processed in UTC, rendered in shop local time.

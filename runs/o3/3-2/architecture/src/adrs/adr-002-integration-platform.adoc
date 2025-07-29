@@ -1,0 +1,13 @@
+= ADR-002 Integration Platform & Anti-Corruption Layer
+
+== Context
+The insurance landscape contains four heterogeneous core systems (mainframe Policy, Java Claims, AS/400 Billing, Teradata DWH).  Protocols range from MQ queues and nightly batch files to REST and JDBC.  The CRM must integrate bidirectionally, isolate its domain model from legacy anomalies, and allow phased migration without high coordination overhead.
+
+== Decision
+We will adopt a central Integration Platform acting as an Enterprise Service Bus (ESB).  MuleSoft Runtime Fabric is the primary runtime; Azure Integration Services is approved as a fallback.  Each legacy system will be fronted by an Anti-Corruption Layer (ACL) adapter implemented on the ESB.  All external interactions use canonical JSON/CloudEvents messages or OpenAPI/AsyncAPI contracts.
+
+== Consequences
+* ✅  Clear separation between clean CRM domain and legacy-specific transforms.
+* ✅  Central monitoring, throttling, and error-handling across all integrations.
+* ⚠  ESB introduces an extra hop; must be sized and highly available.
+* 🔄  Vendor lock-in risk mitigated through spec-first contracts and containerised flows.

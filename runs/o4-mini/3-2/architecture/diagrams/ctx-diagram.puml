@@ -1,0 +1,27 @@
+@startuml
+actor "Insurance Agent" as Agent
+actor "Customer Support Rep" as Support
+actor "Underwriter" as Underwriter
+actor "Marketing Manager" as Marketing
+
+rectangle "InsureSphere CRM" as CRM {
+}
+
+rectangle "Mainframe Policy System" as Mainframe
+rectangle "Java Claims System" as Claims
+rectangle "AS/400 Billing System" as Billing
+rectangle "Teradata Data Warehouse" as DWH
+rectangle "Marketing Cloud" as MarketingCloud
+rectangle "Identity Provider (OAuth2/OIDC)" as IDP
+
+Agent --> CRM : HTTPS / REST
+Support --> CRM : HTTPS / REST
+Underwriter --> CRM : HTTPS / REST
+Marketing --> CRM : HTTPS / REST
+CRM --> Mainframe : MQ / REST via ESB
+CRM --> Claims : SOAP/REST via ESB
+CRM --> Billing : FTP / DB replication via ESB
+CRM --> DWH : CDC / JDBC
+CRM --> MarketingCloud : REST API
+CRM --> IDP : OAuth2/OIDC
+@enduml

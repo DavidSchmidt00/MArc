@@ -1,0 +1,26 @@
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+The following constraints apply to the Prime-Cuts Booking architecture:
+
+* C-ASR-01: Two-tier Monolithic Deployment
+** Frontend: Responsive Single-Page Application (SPA) based on React or Vue.js.
+** Backend: Monolithic application (Node.js/Express or Python/Django) with all business logic in a single deployable unit.
+
+* C-ASR-02: Relational Database
+** Use PostgreSQL as the single source of truth for all persistent data (bookings, users, services, staff schedules).
+
+* C-ASR-03: No In-App Payments in Version 1
+** Payment functionality is out of scope for the initial delivery; may be introduced in a future release.
+
+* C-ASR-04: Third-Party Email/SMS Integration
+** The system must integrate with external providers (e.g., SendGrid, Twilio) for notifications.
+
+* C-ASR-05: Infrastructure-as-Code and Containerization
+** Deploy backend services in containers (Docker), orchestration via Kubernetes or equivalent (e.g., ECS).
+
+* C-ASR-06: Static Asset Delivery via CDN
+** Host and serve SPA bundles over a CDN for optimal performance and global reach.
+
+* C-ASR-07: Use of Redis
+** Redis shall be used both as a distributed cache (availability queries) and a job queue for background processing.

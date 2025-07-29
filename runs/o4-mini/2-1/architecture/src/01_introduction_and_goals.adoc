@@ -1,0 +1,33 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+=== Requirements Overview
+In the three-sided "Fork & Knife" delivery platform, the system must connect Customers, Restaurants, and Delivery Drivers through a unified backend composed of independent services. Key functional requirements include:
+* Customer-facing ordering (browse, filter, cart, payment, real-time tracking).
+* Restaurant portal (menu management, order acceptance, availability, reporting).
+* Driver app (job offers, optimized routing, status updates).
+* Platform administration (user support, monitoring, payment reconciliations).
+
+These requirements drive the need for a scalable, real-time, and reliable microservice architecture supporting web and mobile clients.
+
+=== Quality Goals
+[options="header",cols="1,2,2"]
+|===
+|Quality Goal|Scenario|Priority
+|Scalability|System scales to handle 10,000+ concurrent users and 500 orders/min during peak.|High
+|Real-Time Updates|End-to-end latency for order status and driver location <2 seconds.|High
+|High Availability|Maintain ≥99.9% uptime across all core services, even under failure.|High
+|Security|All communication encrypted (TLS). Payments comply with PCI DSS; OAuth2/JWT-based auth.|High
+|Maintainability|Independent, fast-paced deployments for each microservice via CI/CD.|Medium
+|===
+
+=== Stakeholders
+[options="header",cols="1,2,2"]
+|===
+|Role|Representative|Expectations
+|Customer|End User|Intuitive ordering, real-time tracking, secure payments.
+|Restaurant Manager|Partner Restaurants|Reliable order notifications, easy menu updates, clear earnings reports.
+|Delivery Driver|Contract Drivers|Timely job offers, optimized routing, earnings visibility.
+|Platform Administrator|Operations Team|System observability, user management, payment reconciliation.
+|Development Team|Engineering|Clear service boundaries, independent deployability, stable APIs.
+|===

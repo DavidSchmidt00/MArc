@@ -1,0 +1,22 @@
+= 2. Architecture Constraints
+:toc:
+
+== Business Constraints
+* Budget of a small local business – prefer low-cost PaaS offerings (Heroku free/low-tier, AWS Lightsail/Fargate, etc.).
+* MVP within ~2 months – favour productivity over bleeding-edge tech.
+* EU GDPR compliance; personal data must stay in EU data-centres.
+
+== Technical Constraints
+* Tech stack: JavaScript/TypeScript as primary language across front-end and back-end (React SPA, Node.js 18 LTS).
+* Relational database (PostgreSQL ≥14) for ACID booking transactions.
+* Communication must be HTTPS-only.
+* Notification channels via SaaS e-mail (SendGrid EU) and SMS (Twilio EU or Vonage EU).
+* Deployment uses containers (Docker); CI/CD via GitHub Actions.
+
+== Organisational Constraints
+* Single small dev team (~3 members) – common codebase preferred.
+* Limited ops expertise – leverage managed services for DB, MQ, SMTP/SMS gateways.
+
+== Regulatory Constraints
+* GDPR – right to access and deletion, logs must be redacted.
+* No payment data processed (out of scope for MVP) thus PCI-DSS not applicable yet.

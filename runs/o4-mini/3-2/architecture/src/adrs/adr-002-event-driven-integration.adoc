@@ -1,0 +1,20 @@
+= ADR-002: Event-Driven Integration with Kafka
+
+== Context
+Customer data updates and events from legacy systems must propagate to microservices in near-real-time (≤5min SLA) to maintain data consistency and support asynchronous workflows.
+
+== Decision
+We will use an event-driven architecture based on Apache Kafka as the central event bus. Microservices and CDC connectors will publish and subscribe to Kafka topics for domain events.
+
+== Consequences
+Positive:
+* Loose coupling between producers and consumers.
+* Scalability for high-throughput event processing.
+* Supports replay and audit of events.
+
+Negative:
+* Operational overhead of Kafka clusters.
+* Complexity in managing schema evolution.
+
+Neutral:
+* Encourages asynchronous design patterns.

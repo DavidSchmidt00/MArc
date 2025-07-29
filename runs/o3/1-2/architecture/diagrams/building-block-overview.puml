@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+actor Customer
+rectangle "React SPA" as SPA
+rectangle "Node.js Backend" as Backend
+cloud "SendGrid EU" as SendGrid
+cloud "Twilio/Vonage EU" as SMS
+queue RabbitMQ
+database PostgreSQL
+Customer --> SPA : book/manage
+SPA --> Backend : REST (HTTPS)
+Backend --> PostgreSQL : ACID ops
+Backend --> RabbitMQ : events
+Backend --> SendGrid : email
+Backend --> SMS : sms
+NotificationWorker -[#blue,dashed]> RabbitMQ : consume
+NotificationWorker -[#blue,dashed]> SendGrid
+NotificationWorker -[#blue,dashed]> SMS
+@enduml

@@ -1,0 +1,48 @@
+= 7. Deployment View
+:toc:
+
+== Infrastructure Overview
+|===
+|Component | Technology | Deployment Target | Scaling | Notes
+|React SPA | Static files (HTML/JS/CSS) | Cloudflare CDN | Geo-replicated | TLS termination, caching.
+|Node.js Backend | Docker image | Heroku (Container stack) or AWS Fargate | 2× web containers | Auto-restart, rolling deploys.
+|PostgreSQL DB | Managed Postgres | Heroku Postgres or AWS RDS | Primary + automated backups | Encrypted volume, PITR.
+|RabbitMQ | CloudAMQP “Little Lemur” | Multi-AZ | 1 (can scale) | Provides DLQ.
+|Redis (optional) | Upstash / Heroku Redis | Single node | — | Caches availability queries.
+|Notification Worker | Docker image | Heroku worker dyno / Fargate task | 2 replicas | Stateless.
+|Reminder Scheduler | Heroku Scheduler dyno / AWS EventBridge | 1 | Scheduled every 5 min | Lightweight.
+|===
+
+== Deployment Diagram
+[plantuml, deployment-diagram, svg]
+----
+@startuml
+node CDN
+node "React SPA container" as SPA
+node "Backend container" as Backend
+node "Notification Worker" as Worker
+node "Reminder Scheduler" as Scheduler
+cloud Heroku
+database PostgreSQL
+queue RabbitMQ
+cloud Redis
+cloud SendGrid
+cloud SMS
+CDN --> SPA : cached assets
+SPA --> Backend : HTTPS API
+Backend --> PostgreSQL
+Backend --> RabbitMQ
+Backend --> Redis
+Worker --> RabbitMQ
+Worker --> SendGrid
+Worker --> SMS
+Scheduler --> PostgreSQL
+Scheduler --> RabbitMQ
+@enduml
+----
+
+== Deployment Qualities
+* Zero-downtime deploys supported by rolling container replacement.
+* Secure transport – all traffic via TLS 1.2+.
+* Backups: DB automated daily + WAL, RabbitMQ persistent queues, CDN static assets versioned in CI.
+* Infrastructure as Code (Dockerfiles, `app.json` or Terraform if AWS).

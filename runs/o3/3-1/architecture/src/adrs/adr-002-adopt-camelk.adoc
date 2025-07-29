@@ -1,0 +1,36 @@
+= ADR-002 Adopt Apache Camel-K as Integration Hub Runtime
+:revdate: 2024-06-12
+:status: Accepted
+
+== Context
+The CRM must connect to heterogeneous legacy systems (mainframe via MQ, AS/400 flat files, SOAP services) and perform protocol translation, message enrichment, and routing. Requirements include:
+
+* Native Kubernetes deployment to align with OpenShift.
+* Low operational overhead / fast scaling for many lightweight routes.
+* Ability to reuse the existing Camel route library used inside the organisation.
+* Strong observability and integration with service mesh.
+
+Options evaluated:
+
+* MuleSoft Anypoint Runtime
+* Red Hat Fuse (classic Camel on JBoss)
+* Apache Camel deployed as Spring Boot services
+* Apache Camel-K (operator-based, serverless)
+
+== Decision
+Use **Apache Camel-K** (v1.15) for the Integration Hub and Anti-Corruption Layer routes.
+
+== Consequences
+Positive:
+
+* Operator automates build, deploy, and scaling of routes – lower Ops burden.
+* Reuses existing Camel skills and Enterprise Integration Patterns.
+* Natively integrates with OpenShift service mesh, Prometheus metrics, Jaeger tracing.
+* Rapid iteration; routes written as YAML or Java DSL.
+
+Negative:
+
+* Less maturity than classic Camel deployments; requires cluster tuning.
+* Limited community support compared to MuleSoft’s enterprise offering.
+
+Risk mitigation: PoC successful under expected throughput (10 MB/s); fallback is Spring-Boot Camel services with minimal code change.

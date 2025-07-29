@@ -1,0 +1,22 @@
+@startuml
+actor Agent
+participant "API Gateway" as GW
+participant "Customer Service" as CS
+participant "Kafka" as Kafka
+participant "ESB Connector" as ESB
+participant "ACL Adapter" as ACL
+participant "Mainframe Policy System" as Mainframe
+
+Agent -> GW : POST /customers/{id}/address
+GW -> CS : invoke updateAddress()
+CS -> CS : persist new address in database
+CS -> Kafka : publish CustomerUpdated event
+Kafka -> ESB : subscribe and receive event
+ESB -> ACL : transform CustomerUpdated event
+ACL -> Mainframe : updateAddress via MQ/REST
+ACL -> ESB : return status
+ESB -> Kafka : publish AddressSyncCompleted event
+Kafka -> CS : optionally handle sync confirmation
+CS -> GW : return 200 OK
+Agent <- GW : HTTP/200
+@enduml
